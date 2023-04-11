@@ -6,4 +6,4 @@ Type=Application
 Terminal=false
 Exec=/home/louis/.ComicReader/ComicReader.py
 Name=ComicReader
-Icon=/home/louis/.ComicReader/ComicReader.png
+Icon=/home/louis/.ComicReader/images/ComicReader.png
