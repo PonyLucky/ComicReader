@@ -1,4 +1,4 @@
-# .ComicReader
+# ComicReader
 
 ComicReader is a comic manager + viewer. This app is multiplatform, and is written in Python 3.11. It uses PyQt6 for the GUI.
 

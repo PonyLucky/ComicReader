@@ -3,3 +3,6 @@ __pycache__/
 
 # Ignore ini files
 *.ini
+
+# Ignore tmp dir
+tmp/
