@@ -8,8 +8,8 @@ from PySide6 import QtCore, QtWidgets, QtGui
 import zipfile
 
 # --- UPDATE THIS ---
-WORKING_DIR = '~/.ComicReader/'
-COMIC_DIR = '~/Documents/Mangas/'
+WORKING_DIR = '/home/louis/.ComicReader/'
+COMIC_DIR = '/home/louis/Documents/Mangas/'
 # -------------------
 SETTINGS_PATH = os.path.join(WORKING_DIR, 'ComicReader.ini')
 
@@ -187,8 +187,10 @@ class MainWindow(QtWidgets.QMainWindow):
         # Save last chapter
         self.current_comic.set_last_chapter(chapter)
         # Create temporary directory
-        if not os.path.exists(os.path.join(WORKING_DIR, 'tmp', chapter)):
-            os.makedirs(os.path.join(WORKING_DIR, 'tmp', chapter))
+        manga_name = self.current_comic.name
+        tmp_dir = os.path.join(WORKING_DIR, 'tmp', manga_name, chapter)
+        if not os.path.exists(tmp_dir):
+            os.makedirs(tmp_dir)
         # Clear image viewer
         self.image_viewer_images = []
         # Extract images to a temporary directory
@@ -197,10 +199,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 if image.endswith('.png') or image.endswith('.jpg'):
                     zip_file.extract(
                         image,
-                        os.path.join(WORKING_DIR, 'tmp', chapter)
+                        tmp_dir
                     )
                     self.image_viewer_images.append(
-                        os.path.join(WORKING_DIR, 'tmp', chapter, image)
+                        os.path.join(tmp_dir, image)
                     )
         self.image_viewer_index = 0
         # Load all images vertically
