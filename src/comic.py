@@ -1,5 +1,5 @@
 import os
-from metadata import Metadata
+from .metadata import Metadata
 
 
 class Comic:

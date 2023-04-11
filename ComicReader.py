@@ -15,9 +15,9 @@ SETTINGS_PATH = os.path.join(WORKING_DIR, 'ComicReader.ini')
 # Set working directory
 os.chdir(WORKING_DIR)
 
-from settings import Settings
-from comic import Comic
-from viewer import Viewer
+from src.settings import Settings
+from src.comic import Comic
+from src.viewer import Viewer
 
 
 class MainWindow(QtWidgets.QMainWindow):
