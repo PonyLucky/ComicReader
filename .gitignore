@@ -1,0 +1,5 @@
+# Ignore Python's cache files
+__pycache__/
+
+# Ignore ini files
+*.ini
