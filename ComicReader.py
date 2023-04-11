@@ -209,9 +209,10 @@ class MainWindow(QtWidgets.QMainWindow):
     @QtCore.Slot()
     def key_press(self, event):
         """Handle key press events."""
-        # Handle Ctrl+Q, Ctrl+W -> quit
+        # Handle Esc, Ctrl+Q, Ctrl+W -> quit
         if (
-            (
+            event.key() == QtCore.Qt.Key_Escape
+            or (
                 event.key() == QtCore.Qt.Key_Q
                 and event.modifiers() == QtCore.Qt.ControlModifier
             )

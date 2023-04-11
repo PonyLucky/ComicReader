@@ -33,15 +33,17 @@ class Viewer:
         """Set settings."""
         self.settings = settings
 
-    def chapter_clicked(self, current_comic, chapter_list):
+    def chapter_clicked(self, current_comic=None, chapter_list=None):
         """
         Load images for a chapter.
         Load all images next (scroll) to each other.
         As the chapter is a .cbz file, we can use zipfile to
         extract the images to a temporary directory.
         """
-        self.current_comic = current_comic
-        self.chapter_list = chapter_list
+        if current_comic is not None:
+            self.current_comic = current_comic
+        if chapter_list is not None:
+            self.chapter_list = chapter_list
         chapter = self.chapter_list.currentItem().text()
         chapter_path = self.current_comic.get_chapter_path(chapter)
         # Refresh metadata

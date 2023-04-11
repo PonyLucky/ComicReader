@@ -49,9 +49,9 @@ The app wil display the comics alphabetically (a, b, c, ...), and the chapters i
 
 ### Main window
 
+- `Esc | Ctrl + Q | Ctrl + W` : Close the app.
 - `Arrow keys` : Navigate between comics / chapters.
 - `Enter | Space` : Open the selected comic / chapter.
-- `Ctrl + Q | Ctrl + W` : Close the app.
 - `R` : Read the selected Chapter.
 - `N` : Read the next Chapter.
 
