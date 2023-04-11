@@ -7,8 +7,10 @@ import shutil
 from PySide6 import QtCore, QtWidgets, QtGui
 import zipfile
 
-WORKING_DIR = '/home/louis/.ComicReader/'
-COMIC_DIR = '/home/louis/Documents/Mangas/'
+# --- UPDATE THIS ---
+WORKING_DIR = '~/.ComicReader/'
+COMIC_DIR = '~/Documents/Mangas/'
+# -------------------
 SETTINGS_PATH = os.path.join(WORKING_DIR, 'ComicReader.ini')
 
 # Set working directory
