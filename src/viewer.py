@@ -12,7 +12,7 @@ class Viewer:
         # Image viewer
         self.image_viewer = QtWidgets.QScrollArea()
         self.image_viewer.setWindowTitle('Image Viewer')
-        self.image_viewer.setWindowIcon(QtGui.QIcon('ComicReader.png'))
+        self.image_viewer.setWindowIcon(QtGui.QIcon('images/ComicReader.png'))
         self.image_viewer.resize(1000, 600)
         self.image_viewer.keyPressEvent = self.image_viewer_key_press
         self.image_viewer.mousePressEvent = self.image_viewer_mouse_press
