@@ -65,5 +65,6 @@ The app wil display the comics alphabetically (a, b, c, ...), and the chapters i
 - `P` : Go to the previous chapter.
 - `N` : Go to the next chapter.
 - `F | F11` : Toggle fullscreen.
+- `M` : Toggle menu.
 - `Mouse wheel` : Scroll up / down.
-- `Mouse click` : Scroll up / down, depending on the position of the click. If the click is on the left half of the screen, it will scroll up. If it's on the right half, it will scroll down.
+- `Mouse click` : Scroll up / down, depending on the position of the click. If the click is on the top half (0-40%) of the screen, it will scroll up. If it's on the bottom half (60-100%), it will scroll down. If it's in the middle (40-60%), it will toggle the menu.

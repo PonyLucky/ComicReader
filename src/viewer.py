@@ -9,25 +9,91 @@ class Viewer:
         self.settings = settings
         self.current_comic = None
         self.chapter_list = None
+
         # Image viewer
-        self.image_viewer = QtWidgets.QScrollArea()
+        self.image_viewer = QtWidgets.QWidget()
         self.image_viewer.setWindowTitle('Image Viewer')
-        self.image_viewer.setWindowIcon(QtGui.QIcon('ComicReader.png'))
+        self.image_viewer.setWindowIcon(QtGui.QIcon('images/ComicReader.png'))
         self.image_viewer.resize(1000, 600)
+        # Image viewer events
         self.image_viewer.keyPressEvent = self.image_viewer_key_press
         self.image_viewer.mousePressEvent = self.image_viewer_mouse_press
         self.image_viewer.keyReleaseEvent = self.image_viewer_key_release
         self.image_viewer.wheelEvent = self.image_viewer_wheel_event
-        self.image_viewer.setVerticalScrollBarPolicy(
+
+        # Image viewer layout
+        self.image_viewer_layout = QtWidgets.QVBoxLayout()
+        self.image_viewer.setLayout(self.image_viewer_layout)
+        self.image_viewer_layout.setContentsMargins(0, 0, 0, 0)
+        self.image_viewer_layout.setSpacing(0)
+
+        # Top menu
+        self.top_menu = QtWidgets.QWidget()
+        self.top_menu_layout = QtWidgets.QHBoxLayout()
+        self.top_menu.setLayout(self.top_menu_layout)
+        self.top_menu_layout.setContentsMargins(2, 2, 2, 2)
+        self.top_menu.setStyleSheet('background-color: #1e1b18;')
+        self.image_viewer_layout.addWidget(self.top_menu)
+        # Hide top menu
+        self.top_menu.hide()
+
+        # Size buttons in top menu
+        size_buttons = (30, 30)
+
+        # Close button
+        self.close_button = QtWidgets.QPushButton()
+        self.close_button.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.close_button.setStyleSheet('border-color: #868482;')
+        self.close_button.setIcon(QtGui.QIcon('images/close.svg'))
+        self.close_button.setIconSize(QtCore.QSize(*size_buttons))
+        self.close_button.clicked.connect(self.close_image_viewer)
+        self.top_menu_layout.addWidget(self.close_button)
+
+        # Fullscreen button
+        self.fullscreen_button = QtWidgets.QPushButton()
+        self.fullscreen_button.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.fullscreen_button.setStyleSheet('border-color: #868482;')
+        self.fullscreen_button.setIcon(QtGui.QIcon('images/fullscreen.svg'))
+        self.fullscreen_button.setIconSize(QtCore.QSize(*size_buttons))
+        self.fullscreen_button.clicked.connect(self.toogle_fullscreen)
+        self.top_menu_layout.addWidget(self.fullscreen_button)
+
+        # Spacer
+        self.top_menu_layout.addStretch()
+
+        # Previous button
+        self.previous_button = QtWidgets.QPushButton()
+        self.previous_button.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.previous_button.setStyleSheet('border-color: #868482;')
+        self.previous_button.setIcon(QtGui.QIcon('images/previous.svg'))
+        self.previous_button.setIconSize(QtCore.QSize(*size_buttons))
+        self.previous_button.clicked.connect(self.previous_chapter)
+        self.top_menu_layout.addWidget(self.previous_button)
+
+        # Next button
+        self.next_button = QtWidgets.QPushButton()
+        self.next_button.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.next_button.setStyleSheet('border-color: #868482;')
+        self.next_button.setIcon(QtGui.QIcon('images/next.svg'))
+        self.next_button.setIconSize(QtCore.QSize(*size_buttons))
+        self.next_button.clicked.connect(self.next_chapter)
+        self.top_menu_layout.addWidget(self.next_button)
+
+        # Scroll area
+        self.scroller = QtWidgets.QScrollArea()
+        self.scroller.setVerticalScrollBarPolicy(
             QtCore.Qt.ScrollBarAlwaysOn
         )
-        self.image_viewer.setHorizontalScrollBarPolicy(
+        self.scroller.setHorizontalScrollBarPolicy(
             QtCore.Qt.ScrollBarAlwaysOff
         )
         # Center image
-        self.image_viewer.setAlignment(QtCore.Qt.AlignCenter)
+        self.scroller.setAlignment(QtCore.Qt.AlignCenter)
+        # Add scroll area to layout
+        self.image_viewer_layout.addWidget(self.scroller)
+
         # List of images
-        self.image_viewer_images = []
+        self.scroller_images = []
 
     def set_settings(self, settings: dict):
         """Set settings."""
@@ -56,7 +122,7 @@ class Viewer:
         if not os.path.exists(tmp_dir):
             os.makedirs(tmp_dir)
         # Clear image viewer
-        self.image_viewer_images = []
+        self.scroller_images = []
         # Extract images to a temporary directory
         with zipfile.ZipFile(chapter_path, 'r') as zip_file:
             for image in zip_file.namelist():
@@ -65,23 +131,15 @@ class Viewer:
                         image,
                         tmp_dir
                     )
-                    self.image_viewer_images.append(
+                    self.scroller_images.append(
                         os.path.join(tmp_dir, image)
                     )
+
         # Load all images vertically
         image_widget = QtWidgets.QWidget()
         image_layout = QtWidgets.QVBoxLayout()
-
-        # Add "Previous" button
-        height_button = 50
-        previous_button = QtWidgets.QPushButton('Previous')
-        previous_button.setFixedHeight(height_button)
-        previous_button.setFocusPolicy(QtCore.Qt.NoFocus)
-        previous_button.clicked.connect(self.previous_chapter)
-        image_layout.addWidget(previous_button)
-
         width = self.settings['viewer']['width']
-        for image in self.image_viewer_images:
+        for image in self.scroller_images:
             image_pixmap = QtGui.QPixmap(image)
             # Fit image to width
             image_pixmap = image_pixmap.scaledToWidth(width)
@@ -90,27 +148,21 @@ class Viewer:
             image_label.setPixmap(image_pixmap)
             image_layout.addWidget(image_label)
 
-        # Add "Next" button
-        next_button = QtWidgets.QPushButton('Next')
-        next_button.setFixedHeight(height_button)
-        next_button.setFocusPolicy(QtCore.Qt.NoFocus)
-        next_button.clicked.connect(self.next_chapter)
-        image_layout.addWidget(next_button)
         # Set layout
         image_widget.setLayout(image_layout)
-        self.image_viewer.setWidget(image_widget)
+        self.scroller.setWidget(image_widget)
         # Change window title
         min_title = chapter[:-4].split(' ', 3)
         min_title = min_title[0] + ' ' + min_title[1]
-        self.image_viewer.setWindowTitle(
+        self.scroller.setWindowTitle(
             '{} - {}'.format(self.current_comic.name, min_title)
         )
         # Set focus on image viewer
-        self.image_viewer.setFocus()
+        self.scroller.setFocus()
         # Get last_position if any
         last_position = self.current_comic.get_chapter_last_position()
         if last_position is not None:
-            self.image_viewer.verticalScrollBar().setValue(last_position)
+            self.scroller.verticalScrollBar().setValue(last_position)
         # Maximize image viewer
         self.image_viewer.showMaximized()
 
@@ -136,7 +188,7 @@ class Viewer:
                     )
         print("[DEBUG] Load images")
         print("- chapter: {}".format(chapter_path))
-        print("- nb images: {}".format(len(self.image_viewer_images)))
+        print("- nb images: {}".format(len(self.scroller_images)))
 
     @QtCore.Slot()
     def image_viewer_key_press(self, event):
@@ -153,10 +205,7 @@ class Viewer:
                 and event.modifiers() == QtCore.Qt.ControlModifier
             )
         ):
-            # Save progression
-            self.progression_chapter()
-            # Close image viewer
-            self.image_viewer.hide()
+            self.close_image_viewer()
         # Handle arrow keys -> scroll content
         # Left, Up -> scroll up
         elif (
@@ -197,25 +246,27 @@ class Viewer:
             event.key() == QtCore.Qt.Key_F
             or event.key() == QtCore.Qt.Key_F11
         ):
-            state = self.image_viewer.windowState()
-            if state == QtCore.Qt.WindowFullScreen:
-                self.image_viewer.setWindowState(QtCore.Qt.WindowMaximized)
-            else:
-                self.image_viewer.setWindowState(QtCore.Qt.WindowFullScreen)
+            self.toogle_fullscreen()
+        # Handle M -> toggle top menu
+        elif event.key() == QtCore.Qt.Key_M:
+            self.toogle_top_menu()
 
     @QtCore.Slot()
     def image_viewer_mouse_press(self, event):
         """Handle mouse press events."""
-        # Get x position of mouse press
-        x = event.pos().x()
+        # Get y position of mouse press
+        y = event.pos().y()
         step = self.settings['click']['step']
         duration = self.settings['click']['duration']
-        # Is mouse press on left side of image viewer?
-        if x < self.image_viewer.width() / 2:
+        # Mouse press on top 40% of image viewer
+        if y < self.image_viewer.height() * 0.4:
             # Scroll up
             self.scroll_animation("-", step, duration)
-        # Is mouse press on right side of image viewer?
-        elif x > self.image_viewer.width() / 2:
+        # Mouse press between 40% and 60% of image viewer
+        elif y < self.image_viewer.height() * 0.6:
+            self.toogle_top_menu()
+        # Mouse press on bottom 40% of image viewer
+        else:
             # Scroll down
             self.scroll_animation("+", step, duration)
         # Save progression
@@ -246,13 +297,13 @@ class Viewer:
         # Scroll
         speed = event.angleDelta().y()
         if speed > 0:
-            self.image_viewer.verticalScrollBar().setValue(
-                self.image_viewer.verticalScrollBar().value()
+            self.scroller.verticalScrollBar().setValue(
+                self.scroller.verticalScrollBar().value()
                 - speed
             )
         elif speed < 0:
-            self.image_viewer.verticalScrollBar().setValue(
-                self.image_viewer.verticalScrollBar().value()
+            self.scroller.verticalScrollBar().setValue(
+                self.scroller.verticalScrollBar().value()
                 - speed
             )
 
@@ -272,7 +323,7 @@ class Viewer:
         if force_duration is not None:
             duration = force_duration
         # Get current scroll position
-        current_scroll_position = self.image_viewer.verticalScrollBar().value()
+        current_scroll_position = self.scroller.verticalScrollBar().value()
         # Get new scroll position
         if direction == "+":
             new_scroll_position = current_scroll_position + step
@@ -282,19 +333,19 @@ class Viewer:
             new_scroll_position = 0
         elif direction == "bottom":
             new_scroll_position = (
-                self.image_viewer.verticalScrollBar().maximum()
+                self.scroller.verticalScrollBar().maximum()
             )
         # Create animation
-        self.image_viewer_animation = QtCore.QPropertyAnimation(
-            self.image_viewer.verticalScrollBar(),
+        self.scroller_animation = QtCore.QPropertyAnimation(
+            self.scroller.verticalScrollBar(),
             b"value"
         )
-        self.image_viewer_animation.setDuration(duration)
-        self.image_viewer_animation.setStartValue(current_scroll_position)
-        self.image_viewer_animation.setEndValue(new_scroll_position)
-        self.image_viewer_animation.start()
+        self.scroller_animation.setDuration(duration)
+        self.scroller_animation.setStartValue(current_scroll_position)
+        self.scroller_animation.setEndValue(new_scroll_position)
+        self.scroller_animation.start()
 
-    def previous_chapter(self):
+    def previous_chapter(self, event=None):
         """Select previous chapter."""
         # Get current fullscreen state
         state = self.image_viewer.windowState()
@@ -305,12 +356,12 @@ class Viewer:
             )
             self.chapter_clicked()
         # Reset scroll position
-        self.image_viewer.verticalScrollBar().setValue(0)
+        self.scroller.verticalScrollBar().setValue(0)
         # Set back to fullscreen if needed
         if state == QtCore.Qt.WindowFullScreen:
-            self.image_viewer.setWindowState(QtCore.Qt.WindowFullScreen)
+            self.toogle_fullscreen(force=True)
 
-    def next_chapter(self):
+    def next_chapter(self, event=None):
         """Select next chapter."""
         # Get current fullscreen state
         state = self.image_viewer.windowState()
@@ -321,18 +372,58 @@ class Viewer:
             )
             self.chapter_clicked()
         # Reset scroll position
-        self.image_viewer.verticalScrollBar().setValue(0)
+        self.scroller.verticalScrollBar().setValue(0)
         # Set back to fullscreen if needed
         if state == QtCore.Qt.WindowFullScreen:
-            self.image_viewer.setWindowState(QtCore.Qt.WindowFullScreen)
+            self.toogle_fullscreen(force=True)
 
     def progression_chapter(self):
         """Keep track of progression."""
         # Get current position
-        current_position = self.image_viewer.verticalScrollBar().value()
+        current_position = self.scroller.verticalScrollBar().value()
         # Update progression
         self.current_comic.set_chapter_last_position(current_position)
         # Save
         self.current_comic.save()
         print("[DEBUG] Progression")
         print("- Current position: {}".format(current_position))
+
+    def _set_maximized(self):
+        """Set window maximized."""
+        self.image_viewer.setWindowState(QtCore.Qt.WindowMaximized)
+        self.fullscreen_button.setIcon(QtGui.QIcon('images/fullscreen.svg'))
+
+    def _set_fullscreen(self):
+        """Set window fullscreen."""
+        self.image_viewer.setWindowState(QtCore.Qt.WindowFullScreen)
+        self.fullscreen_button.setIcon(QtGui.QIcon(
+            'images/fullscreen_exit.svg'
+        ))
+
+    def toogle_fullscreen(self, event=None, force: bool = None):
+        """Toggle fullscreen."""
+        if force is not None:
+            if force:
+                self._set_maximized()
+            else:
+                self._set_fullscreen()
+        else:
+            state = self.image_viewer.windowState()
+            if state == QtCore.Qt.WindowFullScreen:
+                self._set_maximized()
+            else:
+                self._set_fullscreen()
+
+    def toogle_top_menu(self, event=None):
+        """Toggle top menu."""
+        if self.top_menu.isHidden():
+            self.top_menu.show()
+        else:
+            self.top_menu.hide()
+
+    def close_image_viewer(self, event=None):
+        """Close image viewer."""
+        # Save progression
+        self.progression_chapter()
+        # Close image viewer
+        self.image_viewer.hide()

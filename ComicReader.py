@@ -24,7 +24,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('Comic Reader')
-        self.setWindowIcon(QtGui.QIcon('ComicReader.png'))
+        self.setWindowIcon(QtGui.QIcon('images/ComicReader.png'))
         self.resize(1000, 600)
         self.keyPressEvent = self.key_press
         self.settings = Settings(SETTINGS_PATH)
