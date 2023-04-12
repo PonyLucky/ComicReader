@@ -32,7 +32,8 @@ class Settings:
                 'viewer': {
                     'width': 800,
                 },
-                'last_read': None
+                'last_read': None,
+                'comics_dir': '/home/louis/Documents/Mangas/',
             }
             self.save()
         with open(self._path, 'r') as f:

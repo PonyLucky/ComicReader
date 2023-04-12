@@ -8,7 +8,6 @@ from PySide6 import QtCore, QtWidgets, QtGui
 
 # --- UPDATE THIS ---
 WORKING_DIR = '/home/louis/.ComicReader/'
-COMIC_DIR = '/home/louis/Documents/Mangas/'
 # -------------------
 SETTINGS_PATH = os.path.join(WORKING_DIR, 'ComicReader.ini')
 
@@ -90,8 +89,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.comic_list.addItems(
             [
                 comic
-                for comic in os.listdir(COMIC_DIR)
-                if os.path.isdir(os.path.join(COMIC_DIR, comic))
+                for comic in os.listdir(self.settings['comics_dir'])
+                if os.path.isdir(os.path.join(
+                    self.settings['comics_dir'],
+                    comic
+                ))
             ]
         )
         # Sort comics
@@ -105,7 +107,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.chapter_list.clear()
         self.current_comic = Comic(
             os.path.join(
-                COMIC_DIR,
+                self.settings['comics_dir'],
                 self.comic_list.currentItem().text()
             )
         )
