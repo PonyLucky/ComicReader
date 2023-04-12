@@ -38,14 +38,16 @@ class Viewer:
         self.top_menu.hide()
 
         # Size buttons in top menu
-        size_buttons = (30, 30)
+        size_buttons = 30
 
         # Close button
         self.close_button = QtWidgets.QPushButton()
         self.close_button.setFocusPolicy(QtCore.Qt.NoFocus)
         self.close_button.setStyleSheet('border-color: #868482;')
         self.close_button.setIcon(QtGui.QIcon('images/close.svg'))
-        self.close_button.setIconSize(QtCore.QSize(*size_buttons))
+        self.close_button.setIconSize(QtCore.QSize(
+            size_buttons, size_buttons
+        ))
         self.close_button.clicked.connect(self.close_image_viewer)
         self.top_menu_layout.addWidget(self.close_button)
 
@@ -54,7 +56,9 @@ class Viewer:
         self.fullscreen_button.setFocusPolicy(QtCore.Qt.NoFocus)
         self.fullscreen_button.setStyleSheet('border-color: #868482;')
         self.fullscreen_button.setIcon(QtGui.QIcon('images/fullscreen.svg'))
-        self.fullscreen_button.setIconSize(QtCore.QSize(*size_buttons))
+        self.fullscreen_button.setIconSize(QtCore.QSize(
+            size_buttons, size_buttons
+        ))
         self.fullscreen_button.clicked.connect(self.toogle_fullscreen)
         self.top_menu_layout.addWidget(self.fullscreen_button)
 
@@ -66,7 +70,9 @@ class Viewer:
         self.previous_button.setFocusPolicy(QtCore.Qt.NoFocus)
         self.previous_button.setStyleSheet('border-color: #868482;')
         self.previous_button.setIcon(QtGui.QIcon('images/previous.svg'))
-        self.previous_button.setIconSize(QtCore.QSize(*size_buttons))
+        self.previous_button.setIconSize(QtCore.QSize(
+            size_buttons, size_buttons
+        ))
         self.previous_button.clicked.connect(self.previous_chapter)
         self.top_menu_layout.addWidget(self.previous_button)
 
@@ -75,7 +81,9 @@ class Viewer:
         self.next_button.setFocusPolicy(QtCore.Qt.NoFocus)
         self.next_button.setStyleSheet('border-color: #868482;')
         self.next_button.setIcon(QtGui.QIcon('images/next.svg'))
-        self.next_button.setIconSize(QtCore.QSize(*size_buttons))
+        self.next_button.setIconSize(QtCore.QSize(
+            size_buttons, size_buttons
+        ))
         self.next_button.clicked.connect(self.next_chapter)
         self.top_menu_layout.addWidget(self.next_button)
 
