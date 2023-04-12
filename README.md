@@ -20,10 +20,6 @@ pip3 install -r requirements.txt
 
 ### 3) Customize the app
 
-You need to update a path in ComicReader.py. You can find it by searching for "UPDATE THIS":
-
-- `WORKING_DIR` : The directory of the project, so it can find itself and its dependencies. Needed for the `import` statements if you run the app outside of the project directory, like using the `.desktop` file on Linux.
-
 You also need to update the `ComicReader.ini` file (manually for now):
 
 - `comics_dir` : The directory where your comics are stored. This is where the app will look for comics to display.

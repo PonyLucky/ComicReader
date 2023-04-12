@@ -6,9 +6,7 @@ import subprocess
 import shutil
 from PySide6 import QtCore, QtWidgets, QtGui
 
-# --- UPDATE THIS ---
-WORKING_DIR = '/home/louis/.ComicReader/'
-# -------------------
+WORKING_DIR = os.path.dirname(os.path.realpath(__file__))
 SETTINGS_PATH = os.path.join(WORKING_DIR, 'ComicReader.ini')
 
 # Set working directory
