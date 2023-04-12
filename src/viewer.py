@@ -414,9 +414,9 @@ class Viewer:
         """Toggle fullscreen."""
         if force is not None:
             if force:
-                self._set_maximized()
-            else:
                 self._set_fullscreen()
+            else:
+                self._set_maximized()
         else:
             state = self.image_viewer.windowState()
             if state == QtCore.Qt.WindowFullScreen:
