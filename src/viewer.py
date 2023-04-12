@@ -95,6 +95,8 @@ class Viewer:
         self.scroller.setHorizontalScrollBarPolicy(
             QtCore.Qt.ScrollBarAlwaysOff
         )
+        # Bind image_viewer key events to scroller
+        self.scroller.keyPressEvent = self.image_viewer_key_press
         # Center image
         self.scroller.setAlignment(QtCore.Qt.AlignCenter)
         # Add scroll area to layout
