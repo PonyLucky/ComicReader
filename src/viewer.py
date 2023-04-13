@@ -222,23 +222,43 @@ class Viewer:
             event.key() == QtCore.Qt.Key_Left
             or event.key() == QtCore.Qt.Key_Up
         ):
-            self.scroll_animation("-")
+            direction = "-"
+            # Update current chapter if needed
+            has_chapter_changed = self.update_chapter_scroller(direction)
+            if has_chapter_changed:
+                return
+            self.scroll_animation(direction)
         # Right, Down -> scroll down
         elif (
             event.key() == QtCore.Qt.Key_Right
             or event.key() == QtCore.Qt.Key_Down
         ):
-            self.scroll_animation("+")
+            direction = "+"
+            # Update current chapter if needed
+            has_chapter_changed = self.update_chapter_scroller(direction)
+            if has_chapter_changed:
+                return
+            self.scroll_animation(direction)
         # Handle PageUp -> scroll up
         elif event.key() == QtCore.Qt.Key_PageUp:
+            direction = "-"
+            # Update current chapter if needed
+            has_chapter_changed = self.update_chapter_scroller(direction)
+            if has_chapter_changed:
+                return
             step = self.settings['page']['step']
             duration = self.settings['page']['duration']
-            self.scroll_animation("-", step, duration)
+            self.scroll_animation(direction, step, duration)
         # Handle PageDown -> scroll down
         elif event.key() == QtCore.Qt.Key_PageDown:
+            direction = "+"
+            # Update current chapter if needed
+            has_chapter_changed = self.update_chapter_scroller(direction)
+            if has_chapter_changed:
+                return
             step = self.settings['page']['step']
             duration = self.settings['page']['duration']
-            self.scroll_animation("+", step, duration)
+            self.scroll_animation(direction, step, duration)
         # Handle Home -> scroll to top
         elif event.key() == QtCore.Qt.Key_Home:
             self.scroll_animation("top")
@@ -270,15 +290,25 @@ class Viewer:
         duration = self.settings['click']['duration']
         # Mouse press on top 40% of image viewer
         if y < self.image_viewer.height() * 0.4:
+            direction = "-"
+            # Update current chapter if needed
+            has_chapter_changed = self.update_chapter_scroller(direction)
+            if has_chapter_changed:
+                return
             # Scroll up
-            self.scroll_animation("-", step, duration)
+            self.scroll_animation(direction, step, duration)
         # Mouse press between 40% and 60% of image viewer
         elif y < self.image_viewer.height() * 0.6:
             self.toogle_top_menu()
         # Mouse press on bottom 40% of image viewer
         else:
+            direction = "+"
+            # Update current chapter if needed
+            has_chapter_changed = self.update_chapter_scroller(direction)
+            if has_chapter_changed:
+                return
             # Scroll down
-            self.scroll_animation("+", step, duration)
+            self.scroll_animation(direction, step, duration)
         # Save progression
         self.progression_chapter()
 
@@ -307,11 +337,19 @@ class Viewer:
         # Scroll
         speed = event.angleDelta().y()
         if speed > 0:
+            # Update current chapter if needed
+            has_chapter_changed = self.update_chapter_scroller("-")
+            if has_chapter_changed:
+                return
             self.scroller.verticalScrollBar().setValue(
                 self.scroller.verticalScrollBar().value()
                 - speed
             )
         elif speed < 0:
+            # Update current chapter if needed
+            has_chapter_changed = self.update_chapter_scroller("+")
+            if has_chapter_changed:
+                return
             self.scroller.verticalScrollBar().setValue(
                 self.scroller.verticalScrollBar().value()
                 - speed
@@ -354,6 +392,25 @@ class Viewer:
         self.scroller_animation.setStartValue(current_scroll_position)
         self.scroller_animation.setEndValue(new_scroll_position)
         self.scroller_animation.start()
+
+    def update_chapter_scroller(self, direction) -> bool:
+        """Update current chapter depending on scroll position."""
+        # If scroll is at the top, read previous chapter
+        if (
+            direction == "-" and
+            self.scroller.verticalScrollBar().value() == 0
+        ):
+            self.previous_chapter()
+            return True
+        # If scroll is at the bottom, read next chapter
+        elif (
+            direction == "+" and
+            self.scroller.verticalScrollBar().value()
+            == self.scroller.verticalScrollBar().maximum()
+        ):
+            self.next_chapter()
+            return True
+        return False
 
     def previous_chapter(self, event=None):
         """Select previous chapter."""
