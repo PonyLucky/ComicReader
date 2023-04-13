@@ -90,7 +90,7 @@ class Viewer:
         # Scroll area
         self.scroller = QtWidgets.QScrollArea()
         self.scroller.setVerticalScrollBarPolicy(
-            QtCore.Qt.ScrollBarAlwaysOn
+            QtCore.Qt.ScrollBarAlwaysOff
         )
         self.scroller.setHorizontalScrollBarPolicy(
             QtCore.Qt.ScrollBarAlwaysOff
