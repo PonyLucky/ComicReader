@@ -384,6 +384,8 @@ class Viewer:
         # Handle changing chapter
         if not self.is_changing_chapter:
             self.is_changing_chapter = True
+            # Stopping scrolling
+            self.scroller_animation.stop()
             self.changing_chapter_timer.start()
             return False
         return True
