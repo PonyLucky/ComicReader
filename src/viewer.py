@@ -105,6 +105,14 @@ class Viewer:
         # List of images
         self.scroller_images = []
 
+        # Boolean to prevent changing multiple chapters at once
+        self.is_changing_chapter = False
+        self.changing_chapter_timer = QtCore.QTimer()
+        self.changing_chapter_timer.setInterval(1000)
+        self.changing_chapter_timer.timeout.connect(
+            self.changing_chapter_timeout
+        )
+
     def set_settings(self, settings: dict):
         """Set settings."""
         self.settings = settings
@@ -355,6 +363,21 @@ class Viewer:
                 - speed
             )
 
+    def changing_chapter_timeout(self, event=None):
+        """Handle changing chapter timeout."""
+        # Handle changing chapter timeout
+        self.changing_chapter_timer.stop()
+        self.is_changing_chapter = False
+
+    def changing_chapter(self) -> bool:
+        """Handle changing chapter."""
+        # Handle changing chapter
+        if not self.is_changing_chapter:
+            self.is_changing_chapter = True
+            self.changing_chapter_timer.start()
+            return False
+        return True
+
     def scroll_animation(
             self,
             direction: str,
@@ -395,25 +418,23 @@ class Viewer:
 
     def update_chapter_scroller(self, direction) -> bool:
         """Update current chapter depending on scroll position."""
+        scroller = self.scroller.verticalScrollBar()
         # If scroll is at the top, read previous chapter
-        if (
-            direction == "-" and
-            self.scroller.verticalScrollBar().value() == 0
-        ):
+        if (direction == "-" and scroller.value() == 0):
             self.previous_chapter()
             return True
         # If scroll is at the bottom, read next chapter
-        elif (
-            direction == "+" and
-            self.scroller.verticalScrollBar().value()
-            == self.scroller.verticalScrollBar().maximum()
-        ):
+        elif (direction == "+" and scroller.value() == scroller.maximum()):
             self.next_chapter()
             return True
         return False
 
     def previous_chapter(self, event=None):
         """Select previous chapter."""
+        # If changing chapter, return
+        is_changing_chapter = self.changing_chapter()
+        if is_changing_chapter:
+            return
         # Get current fullscreen state
         state = self.image_viewer.windowState()
         # If not first chapter, select previous chapter
@@ -430,6 +451,10 @@ class Viewer:
 
     def next_chapter(self, event=None):
         """Select next chapter."""
+        # If changing chapter, return
+        is_changing_chapter = self.changing_chapter()
+        if is_changing_chapter:
+            return
         # Get current fullscreen state
         state = self.image_viewer.windowState()
         # If not last chapter, select next chapter
