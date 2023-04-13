@@ -34,6 +34,7 @@ class Settings:
                 },
                 'last_read': None,
                 'comics_dir': '/home/louis/Documents/Mangas/',
+                'orientation': 'horizontal',
             }
             self.save()
         with open(self._path, 'r') as f:

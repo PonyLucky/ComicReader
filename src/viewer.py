@@ -292,12 +292,22 @@ class Viewer:
     @QtCore.Slot()
     def image_viewer_mouse_press(self, event):
         """Handle mouse press events."""
-        # Get y position of mouse press
-        y = event.pos().y()
+        # Get position of mouse press depending of settings
+        orientation = self.settings['orientation']
+        pos = None
+        base = None
+        if orientation == "vertical":
+            pos = event.pos().y()
+            base = self.image_viewer.height()
+        elif orientation == "horizontal":
+            pos = event.pos().x()
+            base = self.image_viewer.width()
+
+        # Get step and duration of scroll animation
         step = self.settings['click']['step']
         duration = self.settings['click']['duration']
-        # Mouse press on top 40% of image viewer
-        if y < self.image_viewer.height() * 0.4:
+        # Mouse press on 0% to 40% of image viewer
+        if pos < base * 0.4:
             direction = "-"
             # Update current chapter if needed
             has_chapter_changed = self.update_chapter_scroller(direction)
@@ -306,9 +316,9 @@ class Viewer:
             # Scroll up
             self.scroll_animation(direction, step, duration)
         # Mouse press between 40% and 60% of image viewer
-        elif y < self.image_viewer.height() * 0.6:
+        elif pos < base * 0.6:
             self.toogle_top_menu()
-        # Mouse press on bottom 40% of image viewer
+        # Mouse press on 60% and more of image viewer
         else:
             direction = "+"
             # Update current chapter if needed
