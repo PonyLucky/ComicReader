@@ -113,9 +113,9 @@ class Viewer:
             self.changing_chapter_timeout
         )
 
-    def set_settings(self, settings: dict):
-        """Set settings."""
-        self.settings = settings
+    # ------------------------------------------------------------------------
+    # ---------------------------------Events---------------------------------
+    # ------------------------------------------------------------------------
 
     def chapter_clicked(self, current_comic=None, chapter_list=None):
         """
@@ -373,11 +373,90 @@ class Viewer:
                 - speed
             )
 
+    def previous_chapter(self, event=None):
+        """Select previous chapter."""
+        # If changing chapter, return
+        is_changing_chapter = self.changing_chapter()
+        if is_changing_chapter:
+            return
+        # Get current fullscreen state
+        state = self.image_viewer.windowState()
+        # If not first chapter, select previous chapter
+        if self.chapter_list.currentRow() > 0:
+            self.chapter_list.setCurrentRow(
+                self.chapter_list.currentRow() - 1
+            )
+            self.chapter_clicked()
+        # Reset scroll position
+        self.scroller.verticalScrollBar().setValue(0)
+        # Set back to fullscreen if needed
+        if state == QtCore.Qt.WindowFullScreen:
+            self.toogle_fullscreen(force=True)
+
+    def next_chapter(self, event=None):
+        """Select next chapter."""
+        # If changing chapter, return
+        is_changing_chapter = self.changing_chapter()
+        if is_changing_chapter:
+            return
+        # Get current fullscreen state
+        state = self.image_viewer.windowState()
+        # If not last chapter, select next chapter
+        if self.chapter_list.currentRow() < self.chapter_list.count() - 1:
+            self.chapter_list.setCurrentRow(
+                self.chapter_list.currentRow() + 1
+            )
+            self.chapter_clicked()
+        # Reset scroll position
+        self.scroller.verticalScrollBar().setValue(0)
+        # Set back to fullscreen if needed
+        if state == QtCore.Qt.WindowFullScreen:
+            self.toogle_fullscreen(force=True)
+
+    def toogle_fullscreen(self, event=None, force: bool = None):
+        """Toggle fullscreen."""
+        if force is not None:
+            if force:
+                self._set_fullscreen()
+            else:
+                self._set_maximized()
+        else:
+            state = self.image_viewer.windowState()
+            if state == QtCore.Qt.WindowFullScreen:
+                self._set_maximized()
+            else:
+                self._set_fullscreen()
+
+    def toogle_top_menu(self, event=None):
+        """Toggle top menu."""
+        if self.top_menu.isHidden():
+            self.top_menu.show()
+        else:
+            self.top_menu.hide()
+
+    def close_image_viewer(self, event=None):
+        """Close image viewer."""
+        # Save progression
+        self.progression_chapter()
+        # Close image viewer
+        self.image_viewer.hide()
+
+    # ------------------------------------------------------------------------
+    # ---------------------------------Timers---------------------------------
+    # ------------------------------------------------------------------------
+
     def changing_chapter_timeout(self, event=None):
         """Handle changing chapter timeout."""
-        # Handle changing chapter timeout
         self.changing_chapter_timer.stop()
         self.is_changing_chapter = False
+
+    # ------------------------------------------------------------------------
+    # -------------------------------Functions--------------------------------
+    # ------------------------------------------------------------------------
+
+    def set_settings(self, settings: dict):
+        """Set settings."""
+        self.settings = settings
 
     def changing_chapter(self) -> bool:
         """Handle changing chapter."""
@@ -441,46 +520,6 @@ class Viewer:
             return True
         return False
 
-    def previous_chapter(self, event=None):
-        """Select previous chapter."""
-        # If changing chapter, return
-        is_changing_chapter = self.changing_chapter()
-        if is_changing_chapter:
-            return
-        # Get current fullscreen state
-        state = self.image_viewer.windowState()
-        # If not first chapter, select previous chapter
-        if self.chapter_list.currentRow() > 0:
-            self.chapter_list.setCurrentRow(
-                self.chapter_list.currentRow() - 1
-            )
-            self.chapter_clicked()
-        # Reset scroll position
-        self.scroller.verticalScrollBar().setValue(0)
-        # Set back to fullscreen if needed
-        if state == QtCore.Qt.WindowFullScreen:
-            self.toogle_fullscreen(force=True)
-
-    def next_chapter(self, event=None):
-        """Select next chapter."""
-        # If changing chapter, return
-        is_changing_chapter = self.changing_chapter()
-        if is_changing_chapter:
-            return
-        # Get current fullscreen state
-        state = self.image_viewer.windowState()
-        # If not last chapter, select next chapter
-        if self.chapter_list.currentRow() < self.chapter_list.count() - 1:
-            self.chapter_list.setCurrentRow(
-                self.chapter_list.currentRow() + 1
-            )
-            self.chapter_clicked()
-        # Reset scroll position
-        self.scroller.verticalScrollBar().setValue(0)
-        # Set back to fullscreen if needed
-        if state == QtCore.Qt.WindowFullScreen:
-            self.toogle_fullscreen(force=True)
-
     def progression_chapter(self):
         """Keep track of progression."""
         # Get current position
@@ -503,31 +542,3 @@ class Viewer:
         self.fullscreen_button.setIcon(QtGui.QIcon(
             'images/fullscreen_exit.svg'
         ))
-
-    def toogle_fullscreen(self, event=None, force: bool = None):
-        """Toggle fullscreen."""
-        if force is not None:
-            if force:
-                self._set_fullscreen()
-            else:
-                self._set_maximized()
-        else:
-            state = self.image_viewer.windowState()
-            if state == QtCore.Qt.WindowFullScreen:
-                self._set_maximized()
-            else:
-                self._set_fullscreen()
-
-    def toogle_top_menu(self, event=None):
-        """Toggle top menu."""
-        if self.top_menu.isHidden():
-            self.top_menu.show()
-        else:
-            self.top_menu.hide()
-
-    def close_image_viewer(self, event=None):
-        """Close image viewer."""
-        # Save progression
-        self.progression_chapter()
-        # Close image viewer
-        self.image_viewer.hide()
