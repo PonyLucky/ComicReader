@@ -38,7 +38,7 @@ class Viewer:
         self.top_menu.hide()
 
         # Size buttons in top menu
-        size_buttons = int(30 * self.settings['viewer']['ui_scale'])
+        size_buttons = self._scale(30)
 
         # Close button
         self.close_button = QtWidgets.QPushButton()
@@ -159,7 +159,7 @@ class Viewer:
         # Load all images vertically
         image_widget = QtWidgets.QWidget()
         image_layout = QtWidgets.QVBoxLayout()
-        width = self.settings['viewer']['width']
+        width = self._scale(self.settings['viewer']['width'])
         for image in self.scroller_images:
             image_pixmap = QtGui.QPixmap(image)
             # Fit image to width
@@ -256,7 +256,7 @@ class Viewer:
             has_chapter_changed = self.update_chapter_scroller(direction)
             if has_chapter_changed:
                 return
-            step = self.settings['page']['step']
+            step = self._scale(self.settings['page']['step'])
             duration = self.settings['page']['duration']
             self.scroll_animation(direction, step, duration)
         # Handle PageDown -> scroll down
@@ -266,7 +266,7 @@ class Viewer:
             has_chapter_changed = self.update_chapter_scroller(direction)
             if has_chapter_changed:
                 return
-            step = self.settings['page']['step']
+            step = self._scale(self.settings['page']['step'])
             duration = self.settings['page']['duration']
             self.scroll_animation(direction, step, duration)
         # Handle Home -> scroll to top
@@ -305,7 +305,7 @@ class Viewer:
             base = self.image_viewer.width()
 
         # Get step and duration of scroll animation
-        step = self.settings['click']['step']
+        step = self._scale(self.settings['click']['step'])
         duration = self.settings['click']['duration']
         # Mouse press on 0% to 40% of image viewer
         if pos < base * 0.4:
@@ -484,7 +484,7 @@ class Viewer:
     ):
         """Scroll content smoothly using a QPropertyAnimation."""
         # Step
-        step = self.settings['scroll']['step']
+        step = self._scale(self.settings['scroll']['step'])
         if force_step is not None:
             step = abs(force_step)
         # Duration
@@ -549,3 +549,7 @@ class Viewer:
         self.fullscreen_button.setIcon(QtGui.QIcon(
             'images/fullscreen_exit.svg'
         ))
+
+    def _scale(self, val: int) -> int:
+        """Scale value."""
+        return int(val * self.settings['viewer']['ui_scale'])
