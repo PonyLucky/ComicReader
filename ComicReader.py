@@ -4,7 +4,7 @@ import sys
 import re
 import subprocess
 import shutil
-from PySide6 import QtCore, QtWidgets, QtGui
+from PyQt5 import QtCore, QtWidgets, QtGui
 
 WORKING_DIR = os.path.dirname(os.path.realpath(__file__))
 SETTINGS_PATH = os.path.join(WORKING_DIR, 'ComicReader.ini')
@@ -99,7 +99,6 @@ class MainWindow(QtWidgets.QMainWindow):
         print("[DEBUG] Load comics")
         print("- nb comics: {}".format(self.comic_list.count()))
 
-    @QtCore.Slot()
     def comic_clicked(self):
         """Load chapters for a comic."""
         self.chapter_list.clear()
@@ -157,7 +156,6 @@ class MainWindow(QtWidgets.QMainWindow):
         print("- nb chapters: {}".format(self.chapter_list.count()))
         print("- last chapter: {}".format(last_chapter))
 
-    @QtCore.Slot()
     def chapter_clicked(self):
         """Open a chapter in the viewer."""
         self.viewer.set_settings(self.settings)
@@ -166,7 +164,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.chapter_list
         )
 
-    @QtCore.Slot()
     def comic_context_menu(self, position):
         """Context menu for comics."""
         menu = QtWidgets.QMenu()
@@ -182,7 +179,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         menu.exec(self.comic_list.mapToGlobal(position))
 
-    @QtCore.Slot()
     def chapter_context_menu(self, position):
         """Context menu for chapters."""
         menu = QtWidgets.QMenu()
@@ -198,7 +194,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         menu.exec(self.chapter_list.mapToGlobal(position))
 
-    @QtCore.Slot()
     def open_in_file_manager(self):
         """Open the current comic in the file manager."""
         if self.current_comic is not None:
@@ -206,7 +201,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 ['xdg-open', self.current_comic.path]
             )
 
-    @QtCore.Slot()
     def key_press(self, event):
         """Handle key press events."""
         # Handle Esc, Ctrl+Q, Ctrl+W -> quit
@@ -223,7 +217,6 @@ class MainWindow(QtWidgets.QMainWindow):
         ):
             self.close()
 
-    @QtCore.Slot()
     def comic_list_key_press(self, event):
         """Handle key press events."""
         # Handle Enter, Space -> trigger comic_clicked
@@ -258,7 +251,6 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             self.key_press(event)
 
-    @QtCore.Slot()
     def chapter_list_key_press(self, event):
         """Handle key press events."""
         # Handle Enter, Space -> trigger chapter_clicked
@@ -304,7 +296,6 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             self.key_press(event)
 
-    @QtCore.Slot()
     def close(self) -> bool:
         # Clear temporary directory
         if os.path.exists(os.path.join(WORKING_DIR, 'tmp')):

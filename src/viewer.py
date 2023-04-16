@@ -1,5 +1,5 @@
 import os
-from PySide6 import QtCore, QtWidgets, QtGui
+from PyQt5 import QtCore, QtWidgets, QtGui
 import zipfile
 
 
@@ -208,7 +208,6 @@ class Viewer:
         print("- chapter: {}".format(chapter_path))
         print("- nb images: {}".format(len(self.scroller_images)))
 
-    @QtCore.Slot()
     def image_viewer_key_press(self, event):
         """Handle key press events."""
         # Handle Esc, Ctrl+W, Ctrl+Q -> close image viewer
@@ -289,7 +288,6 @@ class Viewer:
         elif event.key() == QtCore.Qt.Key_M:
             self.toogle_top_menu()
 
-    @QtCore.Slot()
     def image_viewer_mouse_press(self, event):
         """Handle mouse press events."""
         # Get position of mouse press depending of settings
@@ -330,7 +328,6 @@ class Viewer:
         # Save progression
         self.progression_chapter()
 
-    @QtCore.Slot()
     def image_viewer_key_release(self, event):
         """Handle key release events."""
         # Handle Down, Up, Left, Right, PageUp, PageDown, Home, End
@@ -347,7 +344,6 @@ class Viewer:
         ):
             self.progression_chapter()
 
-    @QtCore.Slot()
     def image_viewer_wheel_event(self, event):
         """Handle mouse wheel events."""
         # Handle mouse wheel -> Save progression
