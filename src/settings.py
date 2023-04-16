@@ -31,6 +31,7 @@ class Settings:
                 },
                 'viewer': {
                     'width': 800,
+                    'ui_scale': 1.0,
                 },
                 'last_read': None,
                 'comics_dir': '/home/louis/Documents/Mangas/',

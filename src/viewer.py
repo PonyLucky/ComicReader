@@ -38,7 +38,7 @@ class Viewer:
         self.top_menu.hide()
 
         # Size buttons in top menu
-        size_buttons = 30
+        size_buttons = int(30 * self.settings['viewer']['ui_scale'])
 
         # Close button
         self.close_button = QtWidgets.QPushButton()
@@ -112,6 +112,9 @@ class Viewer:
         self.changing_chapter_timer.timeout.connect(
             self.changing_chapter_timeout
         )
+
+        # Set theme
+        self.set_theme()
 
     # ------------------------------------------------------------------------
     # ---------------------------------Events---------------------------------
@@ -449,6 +452,14 @@ class Viewer:
     # ------------------------------------------------------------------------
     # -------------------------------Functions--------------------------------
     # ------------------------------------------------------------------------
+
+    def set_theme(self):
+        """Set theme."""
+        # Set dark theme
+        theme = "background-color: #2d2d2d;color: #ffffff;"
+        self.image_viewer.setStyleSheet("QWidget {" + theme + "}")
+        self.top_menu.setStyleSheet("QWidget {" + theme + "}")
+        self.scroller.setStyleSheet("QScrollArea {" + theme + "}")
 
     def set_settings(self, settings: dict):
         """Set settings."""

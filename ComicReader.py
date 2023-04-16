@@ -56,6 +56,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.splitter.addWidget(self.chapter_list)
         self.setCentralWidget(self.splitter)
 
+        self.set_theme()
+
         self.load_comics()
         self.current_comic = None
 
@@ -78,6 +80,46 @@ class MainWindow(QtWidgets.QMainWindow):
             last_chapter = self.current_comic.get_last_chapter()
             if last_chapter:
                 self.chapter_clicked()
+
+    def set_theme(self):
+        """Set theme."""
+        bg_color = '#282828'
+        style_mw = (
+            'QMainWindow {'
+            + 'background-color: {};'.format(bg_color)
+            + '}'
+        )
+        style_list = (
+            'QListWidget {'
+            + 'background-color: {};'.format(bg_color)
+            + 'color: #ffffff;'
+            + '}'
+        )
+        style_scrollbar = (
+            'QScrollBar:vertical {'
+            + 'background-color: {};'.format(bg_color)
+            + 'width: 10px;'
+            + '}'
+            + 'QScrollBar::handle:vertical {'
+            + 'background-color: #3c3c3c;'
+            + 'border-radius: 5px;'
+            + '}'
+            + 'QScrollBar::add-line:vertical {'
+            + 'background-color: {};'.format(bg_color)
+            + 'height: 0px;'
+            + '}'
+            + 'QScrollBar::sub-line:vertical {'
+            + 'background-color: {};'.format(bg_color)
+            + 'height: 0px;'
+            + '}'
+        )
+        self.setStyleSheet(style_mw)
+        # Style list widgets
+        self.comic_list.setStyleSheet(style_list)
+        self.chapter_list.setStyleSheet(style_list)
+        # Style scrollbars
+        self.comic_list.verticalScrollBar().setStyleSheet(style_scrollbar)
+        self.chapter_list.verticalScrollBar().setStyleSheet(style_scrollbar)
 
     def load_comics(self):
         """Load comics from the comic directory."""
