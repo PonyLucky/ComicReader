@@ -125,15 +125,35 @@ class MainWindow(QtWidgets.QMainWindow):
         """Load comics from the comic directory."""
         self.comic_list.clear()
         self.chapter_list.clear()
+
+        if os.name == 'nt':
+            import win32api
+            import win32con
+
+        def folder_is_hidden(p):
+            if os.name == 'nt':
+                # Windows
+                attribute = win32api.GetFileAttributes(p)
+                return attribute & (
+                    win32con.FILE_ATTRIBUTE_HIDDEN
+                    | win32con.FILE_ATTRIBUTE_SYSTEM
+                )
+            else:
+                # Linux and Mac
+                return p.startswith('.')
+
         # List directories only
         self.comic_list.addItems(
             [
                 comic
                 for comic in os.listdir(self.settings['comics_dir'])
-                if os.path.isdir(os.path.join(
-                    self.settings['comics_dir'],
-                    comic
-                ))
+                if (
+                    os.path.isdir(os.path.join(
+                        self.settings['comics_dir'],
+                        comic
+                    ))
+                    and not folder_is_hidden(comic)
+                )
             ]
         )
         # Sort comics
