@@ -540,12 +540,19 @@ class Viewer:
 
     def _set_maximized(self):
         """Set window maximized."""
-        self.image_viewer.setWindowState(QtCore.Qt.WindowMaximized)
+        self.image_viewer.setWindowState(
+            QtCore.Qt.WindowState.WindowNoState
+        )
+        self.image_viewer.setWindowState(
+            QtCore.Qt.WindowState.WindowMaximized
+        )
         self.fullscreen_button.setIcon(QtGui.QIcon('images/fullscreen.svg'))
 
     def _set_fullscreen(self):
         """Set window fullscreen."""
-        self.image_viewer.setWindowState(QtCore.Qt.WindowFullScreen)
+        self.image_viewer.setWindowState(
+            QtCore.Qt.WindowState.WindowFullScreen
+        )
         self.fullscreen_button.setIcon(QtGui.QIcon(
             'images/fullscreen_exit.svg'
         ))
