@@ -1,6 +1,6 @@
 # ComicReader
 
-ComicReader is a comic manager + viewer. This app is multiplatform, and is written in Python 3.11. It uses PyQt6 for the GUI.
+ComicReader is a comic manager + viewer. This app is multiplatform, and is written in Python 3.11 (Should support earler versions). It uses PyQt5 for the GUI.
 
 ## Installation
 
@@ -42,7 +42,7 @@ COMIC_DIR/
     └── Chapter 3.cbz
 ```
 
-The app wil display the comics alphabetically (a, b, c, ...), and the chapters in natural order (1, 2, 3, ..., 10, 11, 12, ...).
+The app wil display the comics alphabetically (a, b, c, …), and the chapters in natural order (1, 2, 3, …, 10, 11, 12, …).
 
 ## Shortcuts
 
@@ -57,8 +57,8 @@ The app wil display the comics alphabetically (a, b, c, ...), and the chapters i
 ### Viewer
 
 - `Esc | Ctrl + Q | Ctrl + W` : Close the viewer.
-- `Left | Up | Page Up` : Scroll up.
-- `Right | Down | Page Down` : Scroll down.
+- `Left | Up | Page Up | Shift+Space | Shift+Tab` : Scroll up.
+- `Right | Down | Page Down | Space | Tab` : Scroll down.
 - `Home` : Scroll to the top.
 - `End` : Scroll to the bottom.
 - `P` : Go to the previous chapter.
@@ -66,4 +66,4 @@ The app wil display the comics alphabetically (a, b, c, ...), and the chapters i
 - `F | F11` : Toggle fullscreen.
 - `M` : Toggle menu.
 - `Mouse wheel` : Scroll up / down.
-- `Mouse click` : Scroll up / down, depending on the position of the click. If the click is on the top half (0-40%) of the screen, it will scroll up. If it's on the bottom half (60-100%), it will scroll down. If it's in the middle (40-60%), it will toggle the menu.
+- `Mouse click` : Scroll up / down, depending on the position of the click. If the click is on the top half (0-40%) of the screen, it will scroll up. If it's on the bottom half (60-100%), it will scroll down. In the middle (40-60%), it will toggle the menu.

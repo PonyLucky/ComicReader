@@ -232,43 +232,40 @@ class Viewer:
             event.key() == QtCore.Qt.Key_Left
             or event.key() == QtCore.Qt.Key_Up
         ):
-            direction = "-"
-            # Update current chapter if needed
-            has_chapter_changed = self.update_chapter_scroller(direction)
-            if has_chapter_changed:
-                return
-            self.scroll_animation(direction)
+            self.scroll_update("-")
         # Right, Down -> scroll down
         elif (
             event.key() == QtCore.Qt.Key_Right
             or event.key() == QtCore.Qt.Key_Down
         ):
-            direction = "+"
-            # Update current chapter if needed
-            has_chapter_changed = self.update_chapter_scroller(direction)
-            if has_chapter_changed:
-                return
-            self.scroll_animation(direction)
+            self.scroll_update("+")
         # Handle PageUp -> scroll up
         elif event.key() == QtCore.Qt.Key_PageUp:
-            direction = "-"
-            # Update current chapter if needed
-            has_chapter_changed = self.update_chapter_scroller(direction)
-            if has_chapter_changed:
-                return
-            step = self._scale(self.settings['page']['step'])
-            duration = self.settings['page']['duration']
-            self.scroll_animation(direction, step, duration)
+            self.scroll_update("-", True)
         # Handle PageDown -> scroll down
         elif event.key() == QtCore.Qt.Key_PageDown:
-            direction = "+"
-            # Update current chapter if needed
-            has_chapter_changed = self.update_chapter_scroller(direction)
-            if has_chapter_changed:
-                return
-            step = self._scale(self.settings['page']['step'])
-            duration = self.settings['page']['duration']
-            self.scroll_animation(direction, step, duration)
+            self.scroll_update("+", True)
+        # Handle Shift+Space -> scroll up
+        elif (
+            event.key() == QtCore.Qt.Key_Space
+            and event.modifiers() == QtCore.Qt.ShiftModifier
+        ):
+            self.scroll_update("-", True)
+        # Handle Space -> scroll down
+        elif event.key() == QtCore.Qt.Key_Space:
+            self.scroll_update("+", True)
+        # Handle Tab -> scroll down
+        elif event.key() == QtCore.Qt.Key_Tab:
+            self.scroll_update("+", True)
+        # Handle Shift+Tab -> scroll up
+        elif (
+            (
+                event.key() == QtCore.Qt.Key_Tab
+                and event.modifiers() == QtCore.Qt.ShiftModifier
+            )
+            or event.key() == QtCore.Qt.Key_Backtab
+        ):
+            self.scroll_update("-", True)
         # Handle Home -> scroll to top
         elif event.key() == QtCore.Qt.Key_Home:
             self.scroll_animation("top")
@@ -464,6 +461,20 @@ class Viewer:
     def set_settings(self, settings: dict):
         """Set settings."""
         self.settings = settings
+
+    def scroll_update(self, direction: str, is_page: bool = False):
+        """Update scroll position and current chapter if needed."""
+        # Update current chapter if needed
+        has_chapter_changed = self.update_chapter_scroller(direction)
+        if has_chapter_changed:
+            return
+        # Update scroll position
+        step = None
+        duration = None
+        if is_page:
+            step = self._scale(self.settings['page']['step'])
+            duration = self.settings['page']['duration']
+        self.scroll_animation(direction, step, duration)
 
     def changing_chapter(self) -> bool:
         """Handle changing chapter."""
