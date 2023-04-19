@@ -65,6 +65,31 @@ class Viewer:
         # Spacer
         self.top_menu_layout.addStretch()
 
+        # Top button
+        self.top_button = QtWidgets.QPushButton()
+        self.top_button.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.top_button.setStyleSheet('border-color: #868482;')
+        self.top_button.setIcon(QtGui.QIcon('images/top.svg'))
+        self.top_button.setIconSize(QtCore.QSize(
+            size_buttons, size_buttons
+        ))
+        self.top_button.clicked.connect(self.go_to_top)
+        self.top_menu_layout.addWidget(self.top_button)
+
+        # Bottom button
+        self.bottom_button = QtWidgets.QPushButton()
+        self.bottom_button.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.bottom_button.setStyleSheet('border-color: #868482;')
+        self.bottom_button.setIcon(QtGui.QIcon('images/bottom.svg'))
+        self.bottom_button.setIconSize(QtCore.QSize(
+            size_buttons, size_buttons
+        ))
+        self.bottom_button.clicked.connect(self.go_to_bottom)
+        self.top_menu_layout.addWidget(self.bottom_button)
+
+        # Spacer
+        self.top_menu_layout.addStretch()
+
         # Previous button
         self.previous_button = QtWidgets.QPushButton()
         self.previous_button.setFocusPolicy(QtCore.Qt.NoFocus)
@@ -436,6 +461,14 @@ class Viewer:
         self.progression_chapter()
         # Close image viewer
         self.image_viewer.hide()
+
+    def go_to_top(self, event=None):
+        """Go to top."""
+        self.scroll_animation("top")
+
+    def go_to_bottom(self, event=None):
+        """Go to bottom."""
+        self.scroll_animation("bottom")
 
     # ------------------------------------------------------------------------
     # ---------------------------------Timers---------------------------------
