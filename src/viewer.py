@@ -172,7 +172,13 @@ class Viewer:
         # Extract images to a temporary directory
         with zipfile.ZipFile(chapter_path, 'r') as zip_file:
             for image in zip_file.namelist():
-                if image.endswith('.png') or image.endswith('.jpg'):
+                if (
+                    image.endswith('.png')
+                    or image.endswith('.jpg')
+                    or image.endswith('.jpeg')
+                    or image.endswith('.webp')
+                    or image.endswith('.webm')
+                ):
                     zip_file.extract(
                         image,
                         tmp_dir
