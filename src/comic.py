@@ -6,7 +6,10 @@ This class contains utility methods about the comic.
 
 
 import os
-from .metadata import Metadata
+try:
+    from .metadata import Metadata
+except ImportError:
+    from metadata import Metadata
 
 
 class Comic:

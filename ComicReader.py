@@ -44,6 +44,7 @@ settings_path = os.path.join(working_dir, 'ComicReader.ini')
 
 
 class MainWindow(QtWidgets.QMainWindow):
+    """Main window."""
     def __init__(self):
         super().__init__()
         self.setWindowTitle('Comic Reader')
@@ -279,6 +280,12 @@ class MainWindow(QtWidgets.QMainWindow):
     def open_in_file_manager(self):
         """Open the current comic in the file manager."""
         if self.current_comic is not None:
+            if os.name == 'nt':
+                # Windows
+                subprocess.Popen(
+                    ['explorer', self.current_comic.path]
+                )
+            # Linux
             subprocess.Popen(
                 ['xdg-open', self.current_comic.path]
             )

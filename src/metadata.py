@@ -1,9 +1,24 @@
+"""
+Metadata class.
+
+This class contains utility methods about the metadata.
+
+For the comics and its chapters.
+"""
+
 import os
 import json
 from datetime import datetime
 
 
 class Metadata:
+    """
+    Metadata class.
+
+    This class contains utility methods about the metadata.
+
+    For the comics and its chapters.
+    """
     def __init__(self, path):
         self._path = path
         self.metadata = {}
