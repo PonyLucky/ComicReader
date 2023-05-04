@@ -1,4 +1,19 @@
 #!/usr/bin/env python
+
+"""
+Comic Reader
+
+This is a comic reader written in Python 3 and PyQt5.
+
+Author: MARGOT Louis (aka. 'PonyLucky')
+License: MIT
+
+Usage:
+    python ComicReader.py
+    or on Linux: use .desktop file (see README.md)
+"""
+
+
 import os
 import sys
 import re
@@ -137,16 +152,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.comic_list.clear()
         self.chapter_list.clear()
 
-        def folder_is_hidden(p):
+        def folder_is_hidden(path):
             if os.name == 'nt':
                 # Windows
-                attribute = win32api.GetFileAttributes(p)
+                attribute = win32api.GetFileAttributes(path)
                 return attribute & (
                     win32con.FILE_ATTRIBUTE_HIDDEN
                     | win32con.FILE_ATTRIBUTE_SYSTEM
                 )
             # Linux and Mac
-            return p.startswith('.')
+            return path.startswith('.')
 
         # List directories only (and not hidden ones)
         self.comic_list.addItems(
@@ -165,7 +180,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Sort comics
         self.comic_list.sortItems()
         print("[DEBUG] Load comics")
-        print("- nb comics: {}".format(self.comic_list.count()))
+        print(f"- nb comics: {self.comic_list.count()}")
 
     def comic_clicked(self):
         """Load chapters for a comic."""
@@ -209,20 +224,19 @@ class MainWindow(QtWidgets.QMainWindow):
                 if self.chapter_list.item(index).text() == last_chapter:
                     self.chapter_list.setCurrentRow(index)
                     break
-                else:
-                    # Set read chapters to gray
-                    self.chapter_list.item(index).setForeground(
-                        QtGui.QColor(128, 128, 128)
-                    )
+                # Set read chapters to gray
+                self.chapter_list.item(index).setForeground(
+                    QtGui.QColor(128, 128, 128)
+                )
         # Set focus on chapter list
         self.chapter_list.setFocus()
         # Save settings
         self.settings['last_read'] = self.comic_list.currentItem().text()
         self.settings.save()
         print("[DEBUG] Load chapters")
-        print("- comic: {}".format(self.current_comic.path))
-        print("- nb chapters: {}".format(self.chapter_list.count()))
-        print("- last chapter: {}".format(last_chapter))
+        print(f"- comic: {self.current_comic.path}")
+        print(f"- nb chapters: {self.chapter_list.count()}")
+        print(f"- last chapter: {last_chapter}")
 
     def chapter_clicked(self):
         """Open a chapter in the viewer."""
@@ -365,6 +379,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.key_press(event)
 
     def close(self) -> bool:
+        """Close the Application."""
         # Clear temporary directory
         if os.path.exists(os.path.join(working_dir, 'tmp')):
             shutil.rmtree(os.path.join(working_dir, 'tmp'))

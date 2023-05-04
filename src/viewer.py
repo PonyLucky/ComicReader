@@ -1,10 +1,26 @@
+"""
+Viewer class
+
+This class is responsible for displaying the images of the comic.
+
+The viewer is a QWidget that is displayed in a separate window.
+"""
+
 import os
 import zipfile
 from PyQt5 import QtCore, QtWidgets, QtGui
+from .comic import Comic
 
 
 class Viewer:
-    def __init__(self, working_dir, settings):
+    """
+    Viewer class
+
+    This class is responsible for displaying the images of the comic.
+
+    The viewer is a QWidget that is displayed in a separate window.
+    """
+    def __init__(self, working_dir: str, settings: dict):
         self.working_dir = working_dir
         self.settings = settings
         self.current_comic = None
@@ -60,7 +76,7 @@ class Viewer:
         self.fullscreen_button.setIconSize(QtCore.QSize(
             size_buttons, size_buttons
         ))
-        self.fullscreen_button.clicked.connect(self.toogle_fullscreen)
+        self.fullscreen_button.clicked.connect(self.toggle_fullscreen)
         self.top_menu_layout.addWidget(self.fullscreen_button)
 
         # Spacer
@@ -146,7 +162,10 @@ class Viewer:
     # ---------------------------------Events---------------------------------
     # ------------------------------------------------------------------------
 
-    def chapter_clicked(self, current_comic=None, chapter_list=None):
+    def chapter_clicked(
+            self,
+            current_comic: Comic = None,
+            chapter_list: QtWidgets.QListWidget = None):
         """
         Load images for a chapter.
         Load all images next (scroll) to each other.
@@ -315,10 +334,10 @@ class Viewer:
             event.key() == QtCore.Qt.Key_F
             or event.key() == QtCore.Qt.Key_F11
         ):
-            self.toogle_fullscreen()
+            self.toggle_fullscreen()
         # Handle M -> toggle top menu
         elif event.key() == QtCore.Qt.Key_M:
-            self.toogle_top_menu()
+            self.toggle_top_menu()
 
     def image_viewer_mouse_press(self, event):
         """Handle mouse press events."""
@@ -347,7 +366,7 @@ class Viewer:
             self.scroll_animation(direction, step, duration)
         # Mouse press between 40% and 60% of image viewer
         elif pos < base * 0.6:
-            self.toogle_top_menu()
+            self.toggle_top_menu()
         # Mouse press on 60% and more of image viewer
         else:
             direction = "+"
@@ -406,6 +425,9 @@ class Viewer:
 
     def previous_chapter(self, event=None):
         """Select previous chapter."""
+        # DEBUG
+        if event:
+            print("[DEBUG] previous_chapter |", event.key())
         # If changing chapter, return
         is_changing_chapter = self.changing_chapter()
         if is_changing_chapter:
@@ -422,10 +444,13 @@ class Viewer:
         self.scroller.verticalScrollBar().setValue(0)
         # Set back to fullscreen if needed
         if state == QtCore.Qt.WindowFullScreen:
-            self.toogle_fullscreen(force=True)
+            self.toggle_fullscreen(force=True)
 
     def next_chapter(self, event=None):
         """Select next chapter."""
+        # DEBUG
+        if event:
+            print("[DEBUG] next_chapter |", event.key())
         # If changing chapter, return
         is_changing_chapter = self.changing_chapter()
         if is_changing_chapter:
@@ -442,10 +467,13 @@ class Viewer:
         self.scroller.verticalScrollBar().setValue(0)
         # Set back to fullscreen if needed
         if state == QtCore.Qt.WindowFullScreen:
-            self.toogle_fullscreen(force=True)
+            self.toggle_fullscreen(force=True)
 
-    def toogle_fullscreen(self, event=None, force: bool = None):
+    def toggle_fullscreen(self, event=None, force: bool = None):
         """Toggle fullscreen."""
+        # DEBUG
+        if event:
+            print("[DEBUG] toggle_fullscreen |", event.key())
         if force is not None:
             if force:
                 self._set_fullscreen()
@@ -458,8 +486,11 @@ class Viewer:
             else:
                 self._set_fullscreen()
 
-    def toogle_top_menu(self, event=None):
+    def toggle_top_menu(self, event=None):
         """Toggle top menu."""
+        # DEBUG
+        if event:
+            print("[DEBUG] toggle_top_menu |", event.key())
         if self.top_menu.isHidden():
             self.top_menu.show()
         else:
@@ -467,6 +498,9 @@ class Viewer:
 
     def close_image_viewer(self, event=None):
         """Close image viewer."""
+        # DEBUG
+        if event:
+            print("[DEBUG] close_image_viewer |", event.key())
         # Save progression
         self.progression_chapter()
         # Close image viewer
@@ -474,10 +508,16 @@ class Viewer:
 
     def go_to_top(self, event=None):
         """Go to top."""
+        # DEBUG
+        if event:
+            print("[DEBUG] go_to_top |", event.key())
         self.scroll_animation("top")
 
     def go_to_bottom(self, event=None):
         """Go to bottom."""
+        # DEBUG
+        if event:
+            print("[DEBUG] got_to_bottom |", event.key())
         self.scroll_animation("bottom")
 
     # ------------------------------------------------------------------------
@@ -486,6 +526,9 @@ class Viewer:
 
     def changing_chapter_timeout(self, event=None):
         """Handle changing chapter timeout."""
+        # DEBUG
+        if event:
+            print("[DEBUG] changing_chapter_timeout |", event.key())
         self.changing_chapter_timer.stop()
         self.is_changing_chapter = False
 

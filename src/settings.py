@@ -1,9 +1,20 @@
+"""
+Settings module.
+
+To handle the settings of the application.
+"""
+
 import json
 import os
 
 
 class Settings:
-    def __init__(self, path):
+    """
+    Settings class.
+
+    To handle the settings of the application.
+    """
+    def __init__(self, path: str):
         self._path = path
         self.settings = {}
         self.load()
@@ -46,7 +57,7 @@ class Settings:
         with open(self._path, 'w', encoding='utf-8') as file:
             json.dump(self.settings, file, indent=4)
 
-    def get(self, key, default=None) -> object:
+    def get(self, key: object, default: object = None) -> object:
         """Get a setting from the settings dictionary.
 
         ----------
@@ -60,7 +71,7 @@ class Settings:
         """
         return self.settings.get(key, default)
 
-    def set(self, key, value):
+    def set(self, key: object, value: object):
         """Set a setting in the settings dictionary.
 
         ----------
@@ -71,8 +82,8 @@ class Settings:
         self.settings[key] = value
         self.save()
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: object) -> object:
         return self.get(key)
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: object, value: object):
         self.set(key, value)
