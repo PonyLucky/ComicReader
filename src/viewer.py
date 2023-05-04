@@ -521,7 +521,10 @@ class Viewer:
         if not self.is_changing_chapter:
             self.is_changing_chapter = True
             # Stopping scrolling
-            if self.scroller_animation is not None:
+            if (
+                "scroller_animation" in self.__dict__
+                and self.scroller_animation is not None
+            ):
                 self.scroller_animation.stop()
             self.changing_chapter_timer.start()
             return False
