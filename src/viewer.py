@@ -184,7 +184,7 @@ class Viewer:
         self.current_comic.set_last_chapter(chapter)
         # Create temporary directory
         manga_name = self.current_comic.name
-        tmp_dir = os.path.join(self.WORKING_DIR, 'tmp', manga_name, chapter)
+        tmp_dir = os.path.join(self.working_dir, 'tmp', manga_name, chapter)
         if not os.path.exists(tmp_dir):
             os.makedirs(tmp_dir)
         # Clear image viewer
