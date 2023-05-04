@@ -5,16 +5,20 @@ import re
 import subprocess
 import shutil
 from PyQt5 import QtCore, QtWidgets, QtGui
+try:
+    from src.settings import Settings
+    from src.comic import Comic
+    from src.viewer import Viewer
+except ImportError:
+    # Set working directory
+    os.chdir(os.path.dirname(os.path.realpath(__file__)))
+    from src.settings import Settings
+    from src.comic import Comic
+    from src.viewer import Viewer
+
 
 WORKING_DIR = os.path.dirname(os.path.realpath(__file__))
 SETTINGS_PATH = os.path.join(WORKING_DIR, 'ComicReader.ini')
-
-# Set working directory
-os.chdir(WORKING_DIR)
-
-from src.settings import Settings
-from src.comic import Comic
-from src.viewer import Viewer
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -138,9 +142,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     win32con.FILE_ATTRIBUTE_HIDDEN
                     | win32con.FILE_ATTRIBUTE_SYSTEM
                 )
-            else:
-                # Linux and Mac
-                return p.startswith('.')
+            # Linux and Mac
+            return p.startswith('.')
 
         # List directories only (and not hidden ones)
         self.comic_list.addItems(

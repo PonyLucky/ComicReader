@@ -1,6 +1,6 @@
 import os
-from PyQt5 import QtCore, QtWidgets, QtGui
 import zipfile
+from PyQt5 import QtCore, QtWidgets, QtGui
 
 
 class Viewer:
@@ -576,7 +576,7 @@ class Viewer:
             self.previous_chapter()
             return True
         # If scroll is at the bottom, read next chapter
-        elif (direction == "+" and scroller.value() == scroller.maximum()):
+        if (direction == "+" and scroller.value() == scroller.maximum()):
             self.next_chapter()
             return True
         return False
