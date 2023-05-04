@@ -142,7 +142,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 # Linux and Mac
                 return p.startswith('.')
 
-        # List directories only
+        # List directories only (and not hidden ones)
         self.comic_list.addItems(
             [
                 comic
