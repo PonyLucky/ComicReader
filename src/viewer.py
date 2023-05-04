@@ -4,11 +4,12 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 
 
 class Viewer:
-    def __init__(self, WORKING_DIR, settings):
-        self.WORKING_DIR = WORKING_DIR
+    def __init__(self, working_dir, settings):
+        self.working_dir = working_dir
         self.settings = settings
         self.current_comic = None
         self.chapter_list = None
+        self.scroller_animation = None
 
         # Image viewer
         self.image_viewer = QtWidgets.QWidget()
@@ -207,7 +208,7 @@ class Viewer:
         min_title = chapter[:-4].split(' ', 3)
         min_title = min_title[0] + ' ' + min_title[1]
         self.scroller.setWindowTitle(
-            '{} - {}'.format(self.current_comic.name, min_title)
+            f'{self.current_comic.name} - {min_title}'
         )
         # Set focus on image viewer
         self.scroller.setFocus()
@@ -239,8 +240,8 @@ class Viewer:
                         QtGui.QColor(255, 255, 255)
                     )
         print("[DEBUG] Load images")
-        print("- chapter: {}".format(chapter_path))
-        print("- nb images: {}".format(len(self.scroller_images)))
+        print(f"- chapter: {chapter_path}")
+        print(f"- nb images: {len(self.scroller_images)}")
 
     def image_viewer_key_press(self, event):
         """Handle key press events."""
@@ -368,7 +369,10 @@ class Viewer:
             or event.key() == QtCore.Qt.Key_Up
             or event.key() == QtCore.Qt.Key_Left
             or event.key() == QtCore.Qt.Key_Right
-            or event.key() == QtCore.Qt.Key_PageUp
+        ):
+            self.progression_chapter()
+        elif (
+            event.key() == QtCore.Qt.Key_PageUp
             or event.key() == QtCore.Qt.Key_PageDown
             or event.key() == QtCore.Qt.Key_Home
             or event.key() == QtCore.Qt.Key_End
@@ -521,10 +525,7 @@ class Viewer:
         if not self.is_changing_chapter:
             self.is_changing_chapter = True
             # Stopping scrolling
-            if (
-                "scroller_animation" in self.__dict__
-                and self.scroller_animation is not None
-            ):
+            if (self.scroller_animation is not None):
                 self.scroller_animation.stop()
             self.changing_chapter_timer.start()
             return False
@@ -590,7 +591,7 @@ class Viewer:
         # Save
         self.current_comic.save()
         print("[DEBUG] Progression")
-        print("- Current position: {}".format(current_position))
+        print(f"- Current position: {current_position}")
 
     def _set_maximized(self):
         """Set window maximized."""

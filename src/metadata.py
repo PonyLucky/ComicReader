@@ -18,15 +18,15 @@ class Metadata:
                 'last_updated': datetime.now().isoformat()
             }
             self.save()
-        with open(self._path, 'r') as f:
-            self.metadata = json.load(f)
+        with open(self._path, 'r', encoding='utf-8') as file:
+            self.metadata = json.load(file)
 
     def save(self):
         """Save the metadata to the JSON file."""
         # Update the last updated time
         self.metadata['last_updated'] = datetime.now().isoformat()
-        with open(self._path, 'w') as f:
-            json.dump(self.metadata, f, indent=4)
+        with open(self._path, 'w', encoding='utf-8') as file:
+            json.dump(self.metadata, file, indent=4)
 
     def get(self, key, default=None) -> object:
         """Get a metadata from the metadata dictionary.

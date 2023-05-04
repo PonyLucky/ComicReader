@@ -15,10 +15,17 @@ except ImportError:
     from src.settings import Settings
     from src.comic import Comic
     from src.viewer import Viewer
+if os.name == 'nt':
+    try:
+        import win32api
+        import win32con
+    except ImportError:
+        print('Please install pywin32 from pip.')
+        sys.exit(1)
 
 
-WORKING_DIR = os.path.dirname(os.path.realpath(__file__))
-SETTINGS_PATH = os.path.join(WORKING_DIR, 'ComicReader.ini')
+working_dir = os.path.dirname(os.path.realpath(__file__))
+settings_path = os.path.join(working_dir, 'ComicReader.ini')
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -28,7 +35,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setWindowIcon(QtGui.QIcon('images/ComicReader.png'))
         self.resize(1000, 600)
         self.keyPressEvent = self.key_press
-        self.settings = Settings(SETTINGS_PATH)
+        self.settings = Settings(settings_path)
 
         self.comic_list = QtWidgets.QListWidget()
         self.comic_list.itemClicked.connect(self.comic_clicked)
@@ -51,7 +58,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Image viewer will be in a new window
         self.viewer = Viewer(
-            WORKING_DIR=WORKING_DIR,
+            working_dir=working_dir,
             settings=self.settings
         )
 
@@ -90,18 +97,18 @@ class MainWindow(QtWidgets.QMainWindow):
         bg_color = '#282828'
         style_mw = (
             'QMainWindow {'
-            + 'background-color: {};'.format(bg_color)
+            + f'background-color: {bg_color};'
             + '}'
         )
         style_list = (
             'QListWidget {'
-            + 'background-color: {};'.format(bg_color)
+            + f'background-color: {bg_color};'
             + 'color: #ffffff;'
             + '}'
         )
         style_scrollbar = (
             'QScrollBar:vertical {'
-            + 'background-color: {};'.format(bg_color)
+            + f'background-color: {bg_color};'
             + 'width: 10px;'
             + '}'
             + 'QScrollBar::handle:vertical {'
@@ -109,11 +116,11 @@ class MainWindow(QtWidgets.QMainWindow):
             + 'border-radius: 5px;'
             + '}'
             + 'QScrollBar::add-line:vertical {'
-            + 'background-color: {};'.format(bg_color)
+            + f'background-color: {bg_color};'
             + 'height: 0px;'
             + '}'
             + 'QScrollBar::sub-line:vertical {'
-            + 'background-color: {};'.format(bg_color)
+            + f'background-color: {bg_color};'
             + 'height: 0px;'
             + '}'
         )
@@ -129,10 +136,6 @@ class MainWindow(QtWidgets.QMainWindow):
         """Load comics from the comic directory."""
         self.comic_list.clear()
         self.chapter_list.clear()
-
-        if os.name == 'nt':
-            import win32api
-            import win32con
 
         def folder_is_hidden(p):
             if os.name == 'nt':
@@ -363,8 +366,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def close(self) -> bool:
         # Clear temporary directory
-        if os.path.exists(os.path.join(WORKING_DIR, 'tmp')):
-            shutil.rmtree(os.path.join(WORKING_DIR, 'tmp'))
+        if os.path.exists(os.path.join(working_dir, 'tmp')):
+            shutil.rmtree(os.path.join(working_dir, 'tmp'))
             print('[INFO] Temporary directory cleared.')
         # Close window
         return super().close()

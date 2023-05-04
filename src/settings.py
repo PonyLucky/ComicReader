@@ -38,13 +38,13 @@ class Settings:
                 'orientation': 'horizontal',
             }
             self.save()
-        with open(self._path, 'r') as f:
-            self.settings = json.load(f)
+        with open(self._path, 'r', encoding='utf-8') as file:
+            self.settings = json.load(file)
 
     def save(self):
         """Save the settings to the JSON file."""
-        with open(self._path, 'w') as f:
-            json.dump(self.settings, f, indent=4)
+        with open(self._path, 'w', encoding='utf-8') as file:
+            json.dump(self.settings, file, indent=4)
 
     def get(self, key, default=None) -> object:
         """Get a setting from the settings dictionary.
