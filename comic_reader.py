@@ -21,15 +21,15 @@ import subprocess
 import shutil
 from PyQt5 import QtCore, QtWidgets, QtGui
 try:
-    from .src.settings import Settings
-    from .src.comic import Comic
-    from .src.viewer import Viewer
+    from src.settings import Settings
+    from src.comic import Comic
+    from src.viewer import Viewer
 except ImportError:
     # Set working directory
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
-    from .src.settings import Settings
-    from .src.comic import Comic
-    from .src.viewer import Viewer
+    from src.settings import Settings
+    from src.comic import Comic
+    from src.viewer import Viewer
 if os.name == 'nt':
     try:
         import win32api
