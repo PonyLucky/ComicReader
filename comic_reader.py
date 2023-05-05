@@ -24,6 +24,8 @@ try:
     from src.settings import Settings
     from src.comic import Comic
     from src.viewer import Viewer
+    # Set working directory
+    os.chdir(os.path.dirname(os.path.realpath(__file__)))
 except ImportError:
     # Set working directory
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
