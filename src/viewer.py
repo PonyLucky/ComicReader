@@ -30,7 +30,7 @@ class Viewer:
         # Image viewer
         self.image_viewer = QtWidgets.QWidget()
         self.image_viewer.setWindowTitle('Image Viewer')
-        self.image_viewer.setWindowIcon(QtGui.QIcon('images/ComicReader.png'))
+        self.image_viewer.setWindowIcon(QtGui.QIcon('images/comic_reader.png'))
         self.image_viewer.resize(1000, 600)
         # Image viewer events
         self.image_viewer.keyPressEvent = self.image_viewer_key_press

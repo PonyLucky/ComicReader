@@ -20,7 +20,7 @@ pip3 install -r requirements.txt
 
 ### 3) Customize the app
 
-You also need to update the `ComicReader.ini` file (manually for now):
+You also need to update the `comic_reader.ini` file (manually for now):
 
 - `comics_dir` : The directory where your comics are stored. This is where the app will look for comics to display.
 

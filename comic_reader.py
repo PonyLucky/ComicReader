@@ -9,7 +9,7 @@ Author: MARGOT Louis (aka. 'PonyLucky')
 License: MIT
 
 Usage:
-    python ComicReader.py
+    python comic_reader.py
     or on Linux: use .desktop file (see README.md)
 """
 
@@ -40,7 +40,7 @@ if os.name == 'nt':
 
 
 working_dir = os.path.dirname(os.path.realpath(__file__))
-settings_path = os.path.join(working_dir, 'ComicReader.ini')
+settings_path = os.path.join(working_dir, 'comic_reader.ini')
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -48,7 +48,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('Comic Reader')
-        self.setWindowIcon(QtGui.QIcon('images/ComicReader.png'))
+        self.setWindowIcon(QtGui.QIcon('images/comic_reader.png'))
         self.resize(1000, 600)
         self.keyPressEvent = self.key_press
         self.settings = Settings(settings_path)
