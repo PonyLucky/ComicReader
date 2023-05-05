@@ -226,7 +226,7 @@ class Viewer:
         # Change window title
         min_title = chapter[:-4].split(' ', 3)
         min_title = min_title[0] + ' ' + min_title[1]
-        self.scroller.setWindowTitle(
+        self.image_viewer.setWindowTitle(
             f'{self.current_comic.name} - {min_title}'
         )
         # Set focus on image viewer
