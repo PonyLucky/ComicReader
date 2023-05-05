@@ -440,6 +440,9 @@ class Viewer:
                 self.chapter_list.currentRow() - 1
             )
             self.chapter_clicked()
+        else:
+            # Close window if first chapter
+            self.close_image_viewer()
         # Reset scroll position
         self.scroller.verticalScrollBar().setValue(0)
         # Set back to fullscreen if needed
@@ -463,6 +466,9 @@ class Viewer:
                 self.chapter_list.currentRow() + 1
             )
             self.chapter_clicked()
+        else:
+            # Close window if last chapter
+            self.close_image_viewer()
         # Reset scroll position
         self.scroller.verticalScrollBar().setValue(0)
         # Set back to fullscreen if needed
