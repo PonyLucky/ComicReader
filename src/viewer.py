@@ -76,7 +76,7 @@ class Viewer:
         self.fullscreen_button.setIconSize(QtCore.QSize(
             size_buttons, size_buttons
         ))
-        self.fullscreen_button.clicked.connect(self.toggle_fullscreen)
+        self.fullscreen_button.clicked.connect(self._toggle_fullscreen)
         self.top_menu_layout.addWidget(self.fullscreen_button)
 
         # Spacer
@@ -115,7 +115,7 @@ class Viewer:
         self.previous_button.setIconSize(QtCore.QSize(
             size_buttons, size_buttons
         ))
-        self.previous_button.clicked.connect(self.previous_chapter)
+        self.previous_button.clicked.connect(self._previous_chapter)
         self.top_menu_layout.addWidget(self.previous_button)
 
         # Next button
@@ -126,7 +126,7 @@ class Viewer:
         self.next_button.setIconSize(QtCore.QSize(
             size_buttons, size_buttons
         ))
-        self.next_button.clicked.connect(self.next_chapter)
+        self.next_button.clicked.connect(self._next_chapter)
         self.top_menu_layout.addWidget(self.next_button)
 
         # Scroll area
@@ -283,31 +283,31 @@ class Viewer:
             event.key() == QtCore.Qt.Key_Left
             or event.key() == QtCore.Qt.Key_Up
         ):
-            self.scroll_update("-")
+            self._scroll_update("-")
         # Right, Down -> scroll down
         elif (
             event.key() == QtCore.Qt.Key_Right
             or event.key() == QtCore.Qt.Key_Down
         ):
-            self.scroll_update("+")
+            self._scroll_update("+")
         # Handle PageUp -> scroll up
         elif event.key() == QtCore.Qt.Key_PageUp:
-            self.scroll_update("-", True)
+            self._scroll_update("-", True)
         # Handle PageDown -> scroll down
         elif event.key() == QtCore.Qt.Key_PageDown:
-            self.scroll_update("+", True)
+            self._scroll_update("+", True)
         # Handle Shift+Space -> scroll up
         elif (
             event.key() == QtCore.Qt.Key_Space
             and event.modifiers() == QtCore.Qt.ShiftModifier
         ):
-            self.scroll_update("-", True)
+            self._scroll_update("-", True)
         # Handle Space -> scroll down
         elif event.key() == QtCore.Qt.Key_Space:
-            self.scroll_update("+", True)
+            self._scroll_update("+", True)
         # Handle Tab -> scroll down
         elif event.key() == QtCore.Qt.Key_Tab:
-            self.scroll_update("+", True)
+            self._scroll_update("+", True)
         # Handle Shift+Tab -> scroll up
         elif (
             (
@@ -316,28 +316,34 @@ class Viewer:
             )
             or event.key() == QtCore.Qt.Key_Backtab
         ):
-            self.scroll_update("-", True)
+            self._scroll_update("-", True)
         # Handle Home -> scroll to top
         elif event.key() == QtCore.Qt.Key_Home:
-            self.scroll_animation("top")
+            self._scroll_animation("top")
         # Handle End -> scroll to bottom
         elif event.key() == QtCore.Qt.Key_End:
-            self.scroll_animation("bottom")
+            self._scroll_animation("bottom")
         # Handle P -> read previous chapter
         elif event.key() == QtCore.Qt.Key_P:
-            self.previous_chapter()
+            self._previous_chapter()
         # Handle N -> read next chapter
         elif event.key() == QtCore.Qt.Key_N:
-            self.next_chapter()
+            self._next_chapter()
         # Handle F, F11 -> toggle fullscreen
         elif (
             event.key() == QtCore.Qt.Key_F
             or event.key() == QtCore.Qt.Key_F11
         ):
-            self.toggle_fullscreen()
+            self._toggle_fullscreen()
         # Handle M -> toggle top menu
         elif event.key() == QtCore.Qt.Key_M:
-            self.toggle_top_menu()
+            self._toggle_top_menu()
+        # Handle C -> toggle mouse cursor
+        elif event.key() == QtCore.Qt.Key_C:
+            self._toggle_mouse_cursor()
+        # Handle S -> toggle scrollbar
+        elif event.key() == QtCore.Qt.Key_S:
+            self._toggle_scrollbar()
 
     def image_viewer_mouse_press(self, event):
         """Handle mouse press events."""
@@ -363,10 +369,10 @@ class Viewer:
             if has_chapter_changed:
                 return
             # Scroll up
-            self.scroll_animation(direction, step, duration)
+            self._scroll_animation(direction, step, duration)
         # Mouse press between 40% and 60% of image viewer
         elif pos < base * 0.6:
-            self.toggle_top_menu()
+            self._toggle_top_menu()
         # Mouse press on 60% and more of image viewer
         else:
             direction = "+"
@@ -375,7 +381,7 @@ class Viewer:
             if has_chapter_changed:
                 return
             # Scroll down
-            self.scroll_animation(direction, step, duration)
+            self._scroll_animation(direction, step, duration)
         # Save progression
         self.progression_chapter()
 
@@ -423,7 +429,7 @@ class Viewer:
                 - speed
             )
 
-    def previous_chapter(self, event=None):
+    def _previous_chapter(self, event=None):
         """Select previous chapter."""
         # DEBUG
         if event:
@@ -447,9 +453,9 @@ class Viewer:
         self.scroller.verticalScrollBar().setValue(0)
         # Set back to fullscreen if needed
         if state == QtCore.Qt.WindowFullScreen:
-            self.toggle_fullscreen(force=True)
+            self._toggle_fullscreen(force=True)
 
-    def next_chapter(self, event=None):
+    def _next_chapter(self, event=None):
         """Select next chapter."""
         # DEBUG
         if event:
@@ -473,9 +479,9 @@ class Viewer:
         self.scroller.verticalScrollBar().setValue(0)
         # Set back to fullscreen if needed
         if state == QtCore.Qt.WindowFullScreen:
-            self.toggle_fullscreen(force=True)
+            self._toggle_fullscreen(force=True)
 
-    def toggle_fullscreen(self, event=None, force: bool = None):
+    def _toggle_fullscreen(self, event=None, force: bool = None):
         """Toggle fullscreen."""
         # DEBUG
         if event:
@@ -492,7 +498,7 @@ class Viewer:
             else:
                 self._set_fullscreen()
 
-    def toggle_top_menu(self, event=None):
+    def _toggle_top_menu(self, event=None):
         """Toggle top menu."""
         # DEBUG
         if event:
@@ -517,14 +523,14 @@ class Viewer:
         # DEBUG
         if event:
             print("[DEBUG] go_to_top |", event.key())
-        self.scroll_animation("top")
+        self._scroll_animation("top")
 
     def go_to_bottom(self, event=None):
         """Go to bottom."""
         # DEBUG
         if event:
             print("[DEBUG] got_to_bottom |", event.key())
-        self.scroll_animation("bottom")
+        self._scroll_animation("bottom")
 
     # ------------------------------------------------------------------------
     # ---------------------------------Timers---------------------------------
@@ -554,7 +560,7 @@ class Viewer:
         """Set settings."""
         self.settings = settings
 
-    def scroll_update(self, direction: str, is_page: bool = False):
+    def _scroll_update(self, direction: str, is_page: bool = False):
         """Update scroll position and current chapter if needed."""
         # Update current chapter if needed
         has_chapter_changed = self.update_chapter_scroller(direction)
@@ -566,7 +572,7 @@ class Viewer:
         if is_page:
             step = self._scale(self.settings['page']['step'])
             duration = self.settings['page']['duration']
-        self.scroll_animation(direction, step, duration)
+        self._scroll_animation(direction, step, duration)
 
     def changing_chapter(self) -> bool:
         """Handle changing chapter."""
@@ -580,7 +586,7 @@ class Viewer:
             return False
         return True
 
-    def scroll_animation(
+    def _scroll_animation(
             self,
             direction: str,
             force_step: int = None,
@@ -623,11 +629,11 @@ class Viewer:
         scroller = self.scroller.verticalScrollBar()
         # If scroll is at the top, read previous chapter
         if (direction == "-" and scroller.value() == 0):
-            self.previous_chapter()
+            self._previous_chapter()
             return True
         # If scroll is at the bottom, read next chapter
         if (direction == "+" and scroller.value() == scroller.maximum()):
-            self.next_chapter()
+            self._next_chapter()
             return True
         return False
 
@@ -664,3 +670,17 @@ class Viewer:
     def _scale(self, val: int) -> int:
         """Scale value."""
         return int(val * self.settings['viewer']['ui_scale'])
+
+    def _toggle_mouse_cursor(self):
+        """Toggle mouse cursor."""
+        if self.image_viewer.cursor().shape() == QtCore.Qt.ArrowCursor:
+            self.image_viewer.setCursor(QtCore.Qt.BlankCursor)
+        else:
+            self.image_viewer.setCursor(QtCore.Qt.ArrowCursor)
+
+    def _toggle_scrollbar(self):
+        """Toggle scrollbar."""
+        if self.scroller.verticalScrollBar().isVisible():
+            self.scroller.verticalScrollBar().hide()
+        else:
+            self.scroller.verticalScrollBar().show()
