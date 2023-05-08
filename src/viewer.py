@@ -33,10 +33,15 @@ class Viewer:
         self.image_viewer.setWindowIcon(QtGui.QIcon('images/comic_reader.png'))
         self.image_viewer.resize(1000, 600)
         # Image viewer events
-        self.image_viewer.keyPressEvent = self.image_viewer_key_press
-        self.image_viewer.mousePressEvent = self.image_viewer_mouse_press
-        self.image_viewer.keyReleaseEvent = self.image_viewer_key_release
-        self.image_viewer.wheelEvent = self.image_viewer_wheel_event
+        self.image_viewer.keyPressEvent = self._image_viewer_key_press
+        self.image_viewer.mousePressEvent = self._image_viewer_mouse_press
+        self.image_viewer.keyReleaseEvent = self._image_viewer_key_release
+        self.image_viewer.wheelEvent = self._image_viewer_wheel_event
+
+        # Hover events
+        self.image_viewer.setMouseTracking(True)
+        self.image_viewer.installEventFilter(self.image_viewer)
+        self.image_viewer.enterEvent = self._image_viewer_mouse_move
 
         # Image viewer layout
         self.image_viewer_layout = QtWidgets.QVBoxLayout()
@@ -131,14 +136,10 @@ class Viewer:
 
         # Scroll area
         self.scroller = QtWidgets.QScrollArea()
-        self.scroller.setVerticalScrollBarPolicy(
-            QtCore.Qt.ScrollBarAlwaysOff
-        )
-        self.scroller.setHorizontalScrollBarPolicy(
-            QtCore.Qt.ScrollBarAlwaysOff
-        )
+        self.scroller.verticalScrollBar().hide()
+        self.scroller.horizontalScrollBar().hide()
         # Bind image_viewer key events to scroller
-        self.scroller.keyPressEvent = self.image_viewer_key_press
+        self.scroller.keyPressEvent = self._image_viewer_key_press
         # Center image
         self.scroller.setAlignment(QtCore.Qt.AlignCenter)
         # Add scroll area to layout
@@ -156,7 +157,7 @@ class Viewer:
         )
 
         # Set theme
-        self.set_theme()
+        self._set_theme()
 
     # ------------------------------------------------------------------------
     # ---------------------------------Events---------------------------------
@@ -262,7 +263,7 @@ class Viewer:
         print(f"- chapter: {chapter_path}")
         print(f"- nb images: {len(self.scroller_images)}")
 
-    def image_viewer_key_press(self, event):
+    def _image_viewer_key_press(self, event):
         """Handle key press events."""
         # Handle Esc, Ctrl+W, Ctrl+Q -> close image viewer
         if (
@@ -345,7 +346,7 @@ class Viewer:
         elif event.key() == QtCore.Qt.Key_S:
             self._toggle_scrollbar()
 
-    def image_viewer_mouse_press(self, event):
+    def _image_viewer_mouse_press(self, event):
         """Handle mouse press events."""
         # Get position of mouse press depending of settings
         orientation = self.settings['orientation']
@@ -365,7 +366,7 @@ class Viewer:
         if pos < base * 0.4:
             direction = "-"
             # Update current chapter if needed
-            has_chapter_changed = self.update_chapter_scroller(direction)
+            has_chapter_changed = self._update_chapter_scroller(direction)
             if has_chapter_changed:
                 return
             # Scroll up
@@ -377,15 +378,15 @@ class Viewer:
         else:
             direction = "+"
             # Update current chapter if needed
-            has_chapter_changed = self.update_chapter_scroller(direction)
+            has_chapter_changed = self._update_chapter_scroller(direction)
             if has_chapter_changed:
                 return
             # Scroll down
             self._scroll_animation(direction, step, duration)
         # Save progression
-        self.progression_chapter()
+        self._progression_chapter()
 
-    def image_viewer_key_release(self, event):
+    def _image_viewer_key_release(self, event):
         """Handle key release events."""
         # Handle Down, Up, Left, Right, PageUp, PageDown, Home, End
         # -> Save progression
@@ -395,24 +396,24 @@ class Viewer:
             or event.key() == QtCore.Qt.Key_Left
             or event.key() == QtCore.Qt.Key_Right
         ):
-            self.progression_chapter()
+            self._progression_chapter()
         elif (
             event.key() == QtCore.Qt.Key_PageUp
             or event.key() == QtCore.Qt.Key_PageDown
             or event.key() == QtCore.Qt.Key_Home
             or event.key() == QtCore.Qt.Key_End
         ):
-            self.progression_chapter()
+            self._progression_chapter()
 
-    def image_viewer_wheel_event(self, event):
+    def _image_viewer_wheel_event(self, event):
         """Handle mouse wheel events."""
         # Handle mouse wheel -> Save progression
-        self.progression_chapter()
+        self._progression_chapter()
         # Scroll
         speed = event.angleDelta().y()
         if speed > 0:
             # Update current chapter if needed
-            has_chapter_changed = self.update_chapter_scroller("-")
+            has_chapter_changed = self._update_chapter_scroller("-")
             if has_chapter_changed:
                 return
             self.scroller.verticalScrollBar().setValue(
@@ -421,7 +422,7 @@ class Viewer:
             )
         elif speed < 0:
             # Update current chapter if needed
-            has_chapter_changed = self.update_chapter_scroller("+")
+            has_chapter_changed = self._update_chapter_scroller("+")
             if has_chapter_changed:
                 return
             self.scroller.verticalScrollBar().setValue(
@@ -429,13 +430,25 @@ class Viewer:
                 - speed
             )
 
+    def eventFilter(self, obj, event):
+        if (
+            event.type() == QtCore.QEvent.MouseMove
+        ):
+            self._image_viewer_mouse_move(event)
+        return super().eventFilter(obj, event)
+
+    def _image_viewer_mouse_move(self, event):
+        """Handle mouse mouse events."""
+        # Show mouse cursor
+        self._toggle_mouse_cursor(force=True)
+
     def _previous_chapter(self, event=None):
         """Select previous chapter."""
         # DEBUG
         if event:
             print("[DEBUG] previous_chapter |", event.key())
         # If changing chapter, return
-        is_changing_chapter = self.changing_chapter()
+        is_changing_chapter = self._changing_chapter()
         if is_changing_chapter:
             return
         # Get current fullscreen state
@@ -461,7 +474,7 @@ class Viewer:
         if event:
             print("[DEBUG] next_chapter |", event.key())
         # If changing chapter, return
-        is_changing_chapter = self.changing_chapter()
+        is_changing_chapter = self._changing_chapter()
         if is_changing_chapter:
             return
         # Get current fullscreen state
@@ -514,7 +527,7 @@ class Viewer:
         if event:
             print("[DEBUG] close_image_viewer |", event.key())
         # Save progression
-        self.progression_chapter()
+        self._progression_chapter()
         # Close image viewer
         self.image_viewer.hide()
 
@@ -548,7 +561,11 @@ class Viewer:
     # -------------------------------Functions--------------------------------
     # ------------------------------------------------------------------------
 
-    def set_theme(self):
+    def set_settings(self, settings: dict):
+        """Set settings."""
+        self.settings = settings
+
+    def _set_theme(self):
         """Set theme."""
         # Set dark theme
         theme = "background-color: #2d2d2d;color: #ffffff;"
@@ -556,25 +573,22 @@ class Viewer:
         self.top_menu.setStyleSheet("QWidget {" + theme + "}")
         self.scroller.setStyleSheet("QScrollArea {" + theme + "}")
 
-    def set_settings(self, settings: dict):
-        """Set settings."""
-        self.settings = settings
-
     def _scroll_update(self, direction: str, is_page: bool = False):
         """Update scroll position and current chapter if needed."""
         # Update current chapter if needed
-        has_chapter_changed = self.update_chapter_scroller(direction)
+        has_chapter_changed = self._update_chapter_scroller(direction)
         if has_chapter_changed:
             return
         # Update scroll position
         step = None
         duration = None
+        # If page scrolling
         if is_page:
             step = self._scale(self.settings['page']['step'])
             duration = self.settings['page']['duration']
         self._scroll_animation(direction, step, duration)
 
-    def changing_chapter(self) -> bool:
+    def _changing_chapter(self) -> bool:
         """Handle changing chapter."""
         # Handle changing chapter
         if not self.is_changing_chapter:
@@ -606,8 +620,10 @@ class Viewer:
         # Get new scroll position
         if direction == "+":
             new_scroll_position = current_scroll_position + step
+            self._toggle_mouse_cursor(force=False)
         elif direction == "-":
             new_scroll_position = current_scroll_position - step
+            self._toggle_mouse_cursor(force=False)
         elif direction == "top":
             new_scroll_position = 0
         elif direction == "bottom":
@@ -624,7 +640,7 @@ class Viewer:
         self.scroller_animation.setEndValue(new_scroll_position)
         self.scroller_animation.start()
 
-    def update_chapter_scroller(self, direction) -> bool:
+    def _update_chapter_scroller(self, direction) -> bool:
         """Update current chapter depending on scroll position."""
         scroller = self.scroller.verticalScrollBar()
         # If scroll is at the top, read previous chapter
@@ -637,7 +653,7 @@ class Viewer:
             return True
         return False
 
-    def progression_chapter(self):
+    def _progression_chapter(self):
         """Keep track of progression."""
         # Get current position
         current_position = self.scroller.verticalScrollBar().value()
@@ -671,14 +687,26 @@ class Viewer:
         """Scale value."""
         return int(val * self.settings['viewer']['ui_scale'])
 
-    def _toggle_mouse_cursor(self):
+    def _toggle_mouse_cursor(self, force: bool = None):
         """Toggle mouse cursor."""
-        if self.image_viewer.cursor().shape() == QtCore.Qt.ArrowCursor:
-            self.image_viewer.setCursor(QtCore.Qt.BlankCursor)
-        else:
+        # Get current cursor
+        val = self.image_viewer.cursor().shape() != QtCore.Qt.BlankCursor
+        print("[DEBUG] _toggle_mouse_cursor |\n- Blank: ", val)
+        print("- force: ", force)
+        # If cursor is already in the right state, do nothing
+        if val == force:
+            return
+        # Force cursor state if needed
+        if force is not None:
+            val = force
+        print("- val: ", val)
+        # Set cursor
+        if val:
             self.image_viewer.setCursor(QtCore.Qt.ArrowCursor)
+        else:
+            self.image_viewer.setCursor(QtCore.Qt.BlankCursor)
 
-    def _toggle_scrollbar(self):
+    def _toggle_scrollbar(self, force: bool = False):
         """Toggle scrollbar."""
         if self.scroller.verticalScrollBar().isVisible():
             self.scroller.verticalScrollBar().hide()
