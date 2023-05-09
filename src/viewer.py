@@ -691,15 +691,14 @@ class Viewer:
         """Toggle mouse cursor."""
         # Get current cursor
         val = self.image_viewer.cursor().shape() != QtCore.Qt.BlankCursor
-        print("[DEBUG] _toggle_mouse_cursor |\n- Blank: ", val)
-        print("- force: ", force)
         # If cursor is already in the right state, do nothing
         if val == force:
             return
         # Force cursor state if needed
         if force is not None:
             val = force
-        print("- val: ", val)
+        else:
+            val = not val
         # Set cursor
         if val:
             self.image_viewer.setCursor(QtCore.Qt.ArrowCursor)

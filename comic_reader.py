@@ -89,6 +89,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.load_comics()
         self.current_comic = None
+        is_comic_found = False
 
         # Load last read if any
         if self.settings['last_read']:
@@ -97,14 +98,16 @@ class MainWindow(QtWidgets.QMainWindow):
                 if text == self.settings['last_read']:
                     self.comic_list.setCurrentRow(i)
                     self.comic_clicked()
+                    is_comic_found = True
                     break
-            self.comic_clicked()
+            if is_comic_found:
+                self.comic_clicked()
 
         # Show main window
         self.showMaximized()
 
         # Show image viewer if there is a last chapter
-        if self.settings['last_read']:
+        if self.settings['last_read'] and is_comic_found:
             # Load last chapter if any
             last_chapter = self.current_comic.get_last_chapter()
             if last_chapter:
