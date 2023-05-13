@@ -1,3 +1,6 @@
+I found **Komikku** which is exaclty what a did + No bugs and in a way more advanded state.
+They also do have a comic manager with dl feature and refresh to see if a new chapter is available. It's of no use to continue when there's so much better elsewhere.
+
 # ComicReader
 
 ComicReader is a comic manager + viewer. This app is multiplatform, and is written in Python 3.11 (Should support earler versions). It uses PyQt5 for the GUI.
